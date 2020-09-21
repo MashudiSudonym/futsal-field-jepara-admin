@@ -1,0 +1,85 @@
+{
+  "project_info": {
+    "project_number": "206436690317",
+    "firebase_url": "https://futsal-field-jepara.firebaseio.com",
+    "project_id": "futsal-field-jepara",
+    "storage_bucket": "futsal-field-jepara.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:206436690317:android:382cdc10f4bc9dd5f9f5c4",
+        "android_client_info": {
+          "package_name": "c.m.futsal_field_jepara"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "206436690317-b7hl5uot50dbdf92s2pk1fim5rcu06o4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "c.m.futsal_field_jepara",
+            "certificate_hash": "fc6dc685b035f889e5de5f19b7d4634e32f9a06a"
+          }
+        },
+        {
+          "client_id": "206436690317-t2dir3cjs66jvhojidkk9p1vd9lvorl1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDctsaS78VPwPui0KmDojuVgDjAoCO0Phs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "206436690317-t2dir3cjs66jvhojidkk9p1vd9lvorl1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:206436690317:android:0a638b123edc7d27f9f5c4",
+        "android_client_info": {
+          "package_name": "c.m.futsal_field_jepara_admin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "206436690317-m15s141bqrved4pjjca256c4ac1i2j7t.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "c.m.futsal_field_jepara_admin",
+            "certificate_hash": "b04d165c671b4acc2564bf050c759ca41787f19f"
+          }
+        },
+        {
+          "client_id": "206436690317-t2dir3cjs66jvhojidkk9p1vd9lvorl1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDctsaS78VPwPui0KmDojuVgDjAoCO0Phs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "206436690317-t2dir3cjs66jvhojidkk9p1vd9lvorl1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
