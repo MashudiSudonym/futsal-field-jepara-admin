@@ -1,7 +1,12 @@
+import 'package:auto_route/auto_route.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:futsal_field_jepara_admin/models/home_menu.dart';
+import 'package:futsal_field_jepara_admin/utils/router.gr.dart';
+
+final FirebaseAuth _auth = FirebaseAuth.instance;
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -9,9 +14,12 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text(
           "Futsal Field Jepara - Admin",
@@ -19,7 +27,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: AnimationLimiter(
         child: GridView.builder(
-          physics: BouncingScrollPhysics(),
           itemCount: homeMenu.length,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
@@ -52,27 +59,60 @@ class _HomeScreenState extends State<HomeScreen> {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () {},
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            FaIcon(
-              homeMenu[index].icon,
-              size: MediaQuery.of(context).size.width / 100 * 15,
-              color: Colors.blueAccent[400],
-            ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height / 100 * 2.8,
-            ),
-            Text(
-              homeMenu[index].name,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: MediaQuery.of(context).size.width / 100 * 5,
+        onTap: () async {
+          switch (homeMenu[index].id) {
+            case 1:
+              _showSnackBar(index);
+              break;
+            case 2:
+              _showSnackBar(index);
+              break;
+            case 3:
+              _showSnackBar(index);
+              break;
+            case 4:
+              await _auth.signOut().whenComplete(() {
+                ExtendedNavigator.root
+                    .pushAndRemoveUntil(Routes.signInScreen, (route) => false);
+              });
+              break;
+            default:
+          }
+        },
+        child: Container(
+          color: homeMenu[index].color,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              FaIcon(
+                homeMenu[index].icon,
+                size: MediaQuery.of(context).size.width / 100 * 15,
+                color: Colors.white,
               ),
-            ),
-          ],
+              SizedBox(
+                height: MediaQuery.of(context).size.height / 100 * 2.8,
+              ),
+              Text(
+                homeMenu[index].name,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: MediaQuery.of(context).size.width / 100 * 5,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showSnackBar(int index) {
+    _scaffoldKey.currentState.showSnackBar(
+      SnackBar(
+        content: Text(
+          homeMenu[index].name,
         ),
       ),
     );

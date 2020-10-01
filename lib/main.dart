@@ -1,6 +1,9 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:futsal_field_jepara_admin/screens/home_screen.dart';
+import 'package:flutter/services.dart';
+import 'package:futsal_field_jepara_admin/utils/auth_guard.dart';
+import 'package:futsal_field_jepara_admin/utils/router.gr.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,6 +15,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Lock screen rotate
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+
     return FutureBuilder(
       future: _initialization,
       builder: (context, snapshot) {
@@ -46,7 +55,10 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
         fontFamily: "Poppins",
       ),
-      home: HomeScreen(),
+      builder: ExtendedNavigator<Router>(
+        router: Router(),
+        guards: [AuthGuard()],
+      ),
     );
   }
 }
