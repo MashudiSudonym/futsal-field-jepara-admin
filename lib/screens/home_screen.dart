@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:futsal_field_jepara_admin/data/data.dart';
 import 'package:futsal_field_jepara_admin/models/home_menu.dart';
 import 'package:futsal_field_jepara_admin/utils/router.gr.dart';
 
@@ -15,6 +16,24 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() { 
+    super.initState();
+    _checkUserProfileData();
+  }
+
+  void _checkUserProfileData() {
+    final _userID = _auth.currentUser;
+    final _userRootSnapshot = loadUsersCollectionByUserId(_userID.uid);
+
+    _userRootSnapshot.listen((event) {
+      if (event.docs.isEmpty) {
+        ExtendedNavigator.named('homeScreen')
+            // .pushAndRemoveUntil(Routes.completeUserProfileDataScreen, (route) => false);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
