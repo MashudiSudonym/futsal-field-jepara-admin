@@ -1,14 +1,12 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:futsal_field_jepara_admin/utils/router.gr.dart';
+import 'package:futsal_field_jepara_admin/data/data.dart' as data;
 
 class AuthGuard extends RouteGuard {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-
   @override
   Future<bool> canNavigate(ExtendedNavigatorState navigator, String routeName,
       Object arguments) async {
-    final user = _auth.currentUser;
+    final user = data.auth.currentUser;
     print(user);
 
     if (user != null) {

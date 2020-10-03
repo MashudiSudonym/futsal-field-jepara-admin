@@ -1,13 +1,10 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:futsal_field_jepara_admin/data/data.dart';
+import 'package:futsal_field_jepara_admin/data/data.dart' as data;
 import 'package:futsal_field_jepara_admin/models/home_menu.dart';
 import 'package:futsal_field_jepara_admin/utils/router.gr.dart';
-
-final FirebaseAuth _auth = FirebaseAuth.instance;
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -18,19 +15,19 @@ class _HomeScreenState extends State<HomeScreen> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
-  void initState() { 
+  void initState() {
     super.initState();
     _checkUserProfileData();
   }
 
   void _checkUserProfileData() {
-    final _userID = _auth.currentUser;
-    final _userRootSnapshot = loadUsersCollectionByUserId(_userID.uid);
+    final _userID = data.auth.currentUser;
+    final _userRootSnapshot = data.loadUsersCollectionByUserId(_userID.uid);
 
     _userRootSnapshot.listen((event) {
       if (event.docs.isEmpty) {
-        ExtendedNavigator.named('homeScreen')
-            // .pushAndRemoveUntil(Routes.completeUserProfileDataScreen, (route) => false);
+        // ExtendedNavigator.named('homeScreen')
+        // .pushAndRemoveUntil(Routes.completeUserProfileDataScreen, (route) => false);
       }
     });
   }
@@ -90,7 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
               _showSnackBar(index);
               break;
             case 4:
-              await _auth.signOut().whenComplete(() {
+              await data.userSignOut().whenComplete(() {
                 ExtendedNavigator.root
                     .pushAndRemoveUntil(Routes.signInScreen, (route) => false);
               });

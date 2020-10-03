@@ -3,8 +3,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:futsal_field_jepara_admin/utils/router.gr.dart';
-
-final FirebaseAuth _auth = FirebaseAuth.instance;
+import 'package:futsal_field_jepara_admin/data/data.dart' as data;
 
 class SignInScreen extends StatefulWidget {
   @override
@@ -186,7 +185,7 @@ class _SignInScreenState extends State<SignInScreen> {
 
             final PhoneVerificationCompleted verificationCompleted =
                 (AuthCredential phoneAuthCredential) {
-              _auth.signInWithCredential(phoneAuthCredential).then((value) {
+              data.auth.signInWithCredential(phoneAuthCredential).then((value) {
                 setState(() {
                   _message = "success";
                   ExtendedNavigator.root
@@ -215,7 +214,7 @@ class _SignInScreenState extends State<SignInScreen> {
               _verificationId = verificationId;
             };
 
-            await _auth.verifyPhoneNumber(
+            await data.auth.verifyPhoneNumber(
               phoneNumber: _completePhoneNumber,
               timeout: const Duration(seconds: 5),
               verificationCompleted: verificationCompleted,
@@ -288,7 +287,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   smsCode: _verificationCodeInputController.text,
                 );
 
-                final User user = await _auth
+                final User user = await data.auth
                     .signInWithCredential(credential)
                     .then((value) => value.user)
                     .catchError(
@@ -302,7 +301,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   },
                 );
 
-                final currentUser = _auth.currentUser;
+                final currentUser = data.auth.currentUser;
 
                 assert(user.uid == currentUser.uid);
 

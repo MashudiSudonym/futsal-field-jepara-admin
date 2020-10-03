@@ -1,11 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:futsal_field_jepara_admin/models/user.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-final FirebaseFirestore _fireStore = FirebaseFirestore.instance;
+final FirebaseFirestore fireStore = FirebaseFirestore.instance;
+final FirebaseAuth auth = FirebaseAuth.instance;
 
+// firestore section
 Stream<QuerySnapshot> loadUsersCollectionByUserId(String uid) {
-  return _fireStore
-      .collection('users')
-      .where('uid', isEqualTo: uid)
-      .snapshots();
+  return fireStore.collection('users').where('uid', isEqualTo: uid).snapshots();
+}
+
+// auth section
+Future<void> userSignOut() {
+  return auth.signOut();
 }
