@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route_annotations.dart';
+import 'package:futsal_field_jepara_admin/screens/complete_user_profile_data_screen.dart';
 import 'package:futsal_field_jepara_admin/screens/home_screen.dart';
 import 'package:futsal_field_jepara_admin/screens/sign_in_screen.dart';
 import 'package:futsal_field_jepara_admin/utils/auth_guard.dart';
@@ -12,6 +13,10 @@ import 'package:futsal_field_jepara_admin/utils/auth_guard.dart';
     ),
     MaterialRoute(
       page: SignInScreen,
+    ),
+    MaterialRoute(
+      page: CompleteUserProfileDataScreen,
+      guards: [AuthGuard],
     ),
   ],
 )

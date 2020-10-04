@@ -26,8 +26,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
     _userRootSnapshot.listen((event) {
       if (event.docs.isEmpty) {
-        // ExtendedNavigator.named('homeScreen')
-        // .pushAndRemoveUntil(Routes.completeUserProfileDataScreen, (route) => false);
+        ExtendedNavigator.root.pushAndRemoveUntil(
+            Routes.completeUserProfileDataScreen, (route) => false);
       }
     });
   }
