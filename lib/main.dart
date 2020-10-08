@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:futsal_field_jepara_admin/utils/auth_guard.dart';
 import 'package:futsal_field_jepara_admin/utils/router.gr.dart' as routerGr;
+import 'package:hexcolor/hexcolor.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,7 +48,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         appBarTheme: AppBarTheme(
-          color: Colors.redAccent[400],
+          color: Hexcolor('#EF4136'),
           elevation: 0.0,
         ),
         scaffoldBackgroundColor: Colors.white,

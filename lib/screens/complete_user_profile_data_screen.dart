@@ -1,6 +1,15 @@
+import 'dart:io';
+
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:futsal_field_jepara_admin/data/data.dart' as data;
+import 'package:image_picker/image_picker.dart';
+
+enum TypeOperation {
+  upload,
+  download,
+}
 
 class CompleteUserProfileDataScreen extends StatefulWidget {
   @override
@@ -10,10 +19,49 @@ class CompleteUserProfileDataScreen extends StatefulWidget {
 
 class _CompleteUserProfileDataScreenState
     extends State<CompleteUserProfileDataScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final _fullNameController = TextEditingController();
-  final _addressController = TextEditingController();
-  final _emailController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _fullNameController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final String userPhoneNumber = data.userPhoneNumber();
+  final String userUID = data.userUID();
+  final TypeOperation _typeOperation = TypeOperation.download;
+  final ImagePicker _picker = ImagePicker();
+  File _image;
+  bool _isLoading = true;
+  bool _isSuccess = true;
+
+  @override
+  void dispose() {
+    super.dispose();
+    _fullNameController.dispose();
+    _addressController.dispose();
+    _emailController.dispose();
+  }
+
+  Future<void> _getImageFromCamera() async {
+    try {
+      var _pickedFile = await _picker.getImage(source: ImageSource.camera);
+
+      setState(() {
+        _image = File(_pickedFile.path);
+      });
+    } catch (err) {
+      print(err);
+    }
+  }
+
+  Future<void> _getImageFromGallery() async {
+    try {
+      var _pickedFile = await _picker.getImage(source: ImageSource.gallery);
+
+      setState(() {
+        _image = File(_pickedFile.path);
+      });
+    } catch (err) {
+      print(err);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +128,22 @@ class _CompleteUserProfileDataScreenState
           left: MediaQuery.of(context).size.width / 100 * 25,
           bottom: MediaQuery.of(context).size.width / 100 * 5,
           child: FlatButton(
-            onPressed: () {},
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: Text('Ambil Gambar ?'),
+                    content: Container(
+                      child: Text('Pilih gambar dari galeri atau kamera.'),
+                    ),
+                    actions: [
+                      Container(),
+                    ],
+                  );
+                },
+              );
+            },
             child: Container(
               width: MediaQuery.of(context).size.width / 100 * 12,
               height: MediaQuery.of(context).size.width / 100 * 12,
@@ -134,18 +197,66 @@ class _CompleteUserProfileDataScreenState
             ),
             _widgetEmailTextFormField(
                 context, 'Alamat E-Mail', _emailController),
-            RaisedButton(
-              onPressed: () {
-                if (_formKey.currentState.validate()) {
-                  print(_fullNameController.text +
-                      _addressController.text +
-                      _emailController.text);
-                }
-              },
-              child: Text('submit'),
+            _widgetUserPhoneNumberFormField(context),
+            SizedBox(
+              height: MediaQuery.of(context).size.height / 100 * 3,
             ),
+            _widgetSubmitButtonFormField(context),
           ],
         ),
+      ),
+    );
+  }
+
+  Container _widgetUserPhoneNumberFormField(BuildContext context) {
+    return Container(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Nomor Telepon',
+            style: TextStyle(
+              fontSize: MediaQuery.of(context).size.width / 100 * 5,
+            ),
+          ),
+          SizedBox(
+            height: MediaQuery.of(context).size.width / 100 * 2,
+          ),
+          Text(
+            userPhoneNumber,
+            style: TextStyle(
+              letterSpacing: 3.5,
+              fontSize: MediaQuery.of(context).size.width / 100 * 5,
+            ),
+          ),
+          SizedBox(
+            height: MediaQuery.of(context).size.width / 100 * 2,
+          ),
+          Text(
+            '*Nomor telepon tidak dapat diganti.',
+            style: TextStyle(
+              fontSize: MediaQuery.of(context).size.width / 100 * 3,
+              color: Colors.red,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Container _widgetSubmitButtonFormField(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      height: MediaQuery.of(context).size.height / 100 * 5.5,
+      child: ElevatedButton(
+        onPressed: () {
+          if (_formKey.currentState.validate()) {
+            print(_fullNameController.text +
+                _addressController.text +
+                _emailController.text);
+          }
+        },
+        child: Text('Kirim Data'),
       ),
     );
   }

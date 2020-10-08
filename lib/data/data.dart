@@ -13,3 +13,7 @@ Stream<QuerySnapshot> loadUsersCollectionByUserId(String uid) {
 Future<void> userSignOut() {
   return auth.signOut();
 }
+
+String userPhoneNumber() => auth.currentUser.phoneNumber;
+
+String userUID() => auth.currentUser.uid;
