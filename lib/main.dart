@@ -3,7 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:futsal_field_jepara_admin/utils/auth_guard.dart';
-import 'package:futsal_field_jepara_admin/utils/router.gr.dart';
+import 'package:futsal_field_jepara_admin/utils/router.gr.dart' as routerGr;
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return Center(
-            child: Text("Ada yang salah!!"),
+            child: Text('Ada yang salah!!'),
           );
         }
 
@@ -53,10 +53,10 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.white,
         primarySwatch: Colors.red,
         visualDensity: VisualDensity.adaptivePlatformDensity,
-        fontFamily: "Poppins",
+        fontFamily: 'Poppins',
       ),
-      builder: ExtendedNavigator<Router>(
-        router: Router(),
+      builder: ExtendedNavigator<routerGr.Router>(
+        router: routerGr.Router(),
         guards: [AuthGuard()],
       ),
     );

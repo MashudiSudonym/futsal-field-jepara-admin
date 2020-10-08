@@ -23,7 +23,7 @@ class _CompleteUserProfileDataScreenState
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Complete your profile data'),
+          title: Text('Lengkapi Profil Admin'),
         ),
         body: Stack(
           children: [
@@ -34,9 +34,9 @@ class _CompleteUserProfileDataScreenState
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       // image user profile
-                      _buildImageProfile(context),
+                      _widgetSelectImageProfile(context),
                       // form user profile information
-                      _buildFormProfile(context),
+                      _widgetFormProfile(context),
                     ],
                   ),
                 ),
@@ -48,7 +48,7 @@ class _CompleteUserProfileDataScreenState
     );
   }
 
-  Stack _buildImageProfile(BuildContext context) {
+  Stack _widgetSelectImageProfile(BuildContext context) {
     return Stack(
       alignment: Alignment.center,
       children: [
@@ -61,7 +61,7 @@ class _CompleteUserProfileDataScreenState
             decoration: BoxDecoration(
               color: Colors.grey,
               image: DecorationImage(
-                image: AssetImage("assets/ben-sweet-2LowviVHZ-E-unsplash.jpg"),
+                image: AssetImage('assets/ben-sweet-2LowviVHZ-E-unsplash.jpg'),
                 fit: BoxFit.cover,
               ),
               borderRadius: BorderRadius.all(
@@ -76,11 +76,38 @@ class _CompleteUserProfileDataScreenState
             ),
           ),
         ),
+        Positioned(
+          left: MediaQuery.of(context).size.width / 100 * 25,
+          bottom: MediaQuery.of(context).size.width / 100 * 5,
+          child: FlatButton(
+            onPressed: () {},
+            child: Container(
+              width: MediaQuery.of(context).size.width / 100 * 12,
+              height: MediaQuery.of(context).size.width / 100 * 12,
+              decoration: BoxDecoration(
+                color: Colors.grey,
+                image: DecorationImage(
+                  image: AssetImage('assets/camera-icon-55.jpg'),
+                  fit: BoxFit.cover,
+                ),
+                borderRadius: BorderRadius.all(
+                  Radius.circular(90),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    blurRadius: 7,
+                    color: Colors.black38,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
       ],
     );
   }
 
-  Form _buildFormProfile(BuildContext context) {
+  Form _widgetFormProfile(BuildContext context) {
     return Form(
       key: _formKey,
       child: Padding(
@@ -93,23 +120,26 @@ class _CompleteUserProfileDataScreenState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            commonTextFormField(
+            _widgetCommonTextFormField(
               context,
               'Anda belum mengisi nama lengkap.',
               'Nama Lengkap',
               _fullNameController,
             ),
-            commonTextFormField(
+            _widgetCommonTextFormField(
               context,
               'Anda belum mengisi alamat lengkap',
               'Alamat Lengkap',
               _addressController,
             ),
-            emailTextFormField(context, 'Alamat E-Mail', _emailController),
+            _widgetEmailTextFormField(
+                context, 'Alamat E-Mail', _emailController),
             RaisedButton(
               onPressed: () {
                 if (_formKey.currentState.validate()) {
-                  print(_fullNameController.text + _addressController.text + _emailController.text);
+                  print(_fullNameController.text +
+                      _addressController.text +
+                      _emailController.text);
                 }
               },
               child: Text('submit'),
@@ -120,8 +150,11 @@ class _CompleteUserProfileDataScreenState
     );
   }
 
-  TextFormField commonTextFormField(BuildContext context, String errorInfo,
-      String hintText, TextEditingController textEditingController) {
+  TextFormField _widgetCommonTextFormField(
+      BuildContext context,
+      String errorInfo,
+      String hintText,
+      TextEditingController textEditingController) {
     return TextFormField(
       controller: textEditingController,
       keyboardType: TextInputType.text,
@@ -130,7 +163,7 @@ class _CompleteUserProfileDataScreenState
         fontSize: MediaQuery.of(context).size.width / 100 * 5,
         color: Colors.black87,
       ),
-      decoration: inputDecorationTextFormField(context, hintText),
+      decoration: _widgetInputDecorationTextFormField(context, hintText),
       validator: (value) {
         if (value.isEmpty) {
           return errorInfo;
@@ -140,8 +173,8 @@ class _CompleteUserProfileDataScreenState
     );
   }
 
-  TextFormField emailTextFormField(BuildContext context,
-      String hintText, TextEditingController textEditingController) {
+  TextFormField _widgetEmailTextFormField(BuildContext context, String hintText,
+      TextEditingController textEditingController) {
     return TextFormField(
       controller: textEditingController,
       keyboardType: TextInputType.emailAddress,
@@ -149,9 +182,8 @@ class _CompleteUserProfileDataScreenState
         fontSize: MediaQuery.of(context).size.width / 100 * 5,
         color: Colors.black87,
       ),
-      decoration: inputDecorationTextFormField(context, hintText),
+      decoration: _widgetInputDecorationTextFormField(context, hintText),
       validator: (value) {
-
         if (!EmailValidator.validate(value)) {
           return 'Email tidak valid';
         }
@@ -163,7 +195,7 @@ class _CompleteUserProfileDataScreenState
     );
   }
 
-  InputDecoration inputDecorationTextFormField(
+  InputDecoration _widgetInputDecorationTextFormField(
       BuildContext context, String hintText) {
     return InputDecoration(
       border: InputBorder.none,

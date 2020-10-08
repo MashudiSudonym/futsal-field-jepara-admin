@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:futsal_field_jepara_admin/utils/router.gr.dart';
+import 'package:flutter/material.dart';
 import 'package:futsal_field_jepara_admin/data/data.dart' as data;
+import 'package:futsal_field_jepara_admin/utils/router.gr.dart';
 
 class SignInScreen extends StatefulWidget {
   @override
@@ -15,7 +15,7 @@ class _SignInScreenState extends State<SignInScreen> {
   final _verificationCodeInputController = TextEditingController();
   String _countryCodeInput;
   String _completePhoneNumber;
-  String _message = "";
+  String _message = '';
   String _verificationId;
 
   @override
@@ -28,7 +28,7 @@ class _SignInScreenState extends State<SignInScreen> {
   @override
   Widget build(BuildContext context) {
     // check keyboard status for conditional layout
-    bool _isKeyboardShowing = MediaQuery.of(context).viewInsets.bottom > 0;
+    var _isKeyboardShowing = MediaQuery.of(context).viewInsets.bottom > 0;
 
     return _buildSignInContentLayout(context, _isKeyboardShowing);
   }
@@ -64,7 +64,7 @@ class _SignInScreenState extends State<SignInScreen> {
             // image logo
             Center(
               child: Image(
-                image: AssetImage("assets/icon.png"),
+                image: AssetImage('assets/icon.png'),
                 width: MediaQuery.of(context).size.width / 100 * 50,
               ),
             ),
@@ -74,17 +74,17 @@ class _SignInScreenState extends State<SignInScreen> {
               height: MediaQuery.of(context).size.height / 100 * 1,
             ),
             Opacity(
-              opacity: (_message != "" && _message != null) ? 1 : 0,
+              opacity: (_message != '' && _message != null) ? 1 : 0,
               child: Padding(
                 padding: EdgeInsets.symmetric(
                   horizontal: MediaQuery.of(context).size.width / 100 * 4,
                 ),
                 child: Text(
-                  "$_message",
+                  _message,
                   style: TextStyle(
                     fontSize: MediaQuery.of(context).size.width / 100 * 3,
                     color:
-                        _message != "success" ? Colors.red[400] : Colors.green,
+                        _message != 'success' ? Colors.red[400] : Colors.green,
                   ),
                 ),
               ),
@@ -138,11 +138,11 @@ class _SignInScreenState extends State<SignInScreen> {
               cursorColor: Colors.black87,
               decoration: InputDecoration(
                 border: InputBorder.none,
-                counterText: "", // hide word counter
-                hintText: "85xxxxxx123",
+                counterText: '', // hide word counter
+                hintText: '85xxxxxx123',
                 hintStyle: TextStyle(
                   fontSize: MediaQuery.of(context).size.width / 100 * 5,
-                  color: Colors.black,
+                  color: Colors.black26,
                 ),
               ),
               style: TextStyle(
@@ -170,7 +170,7 @@ class _SignInScreenState extends State<SignInScreen> {
       child: FlatButton(
         child: Center(
           child: Text(
-            "Sign In",
+            'Sign In',
             style: TextStyle(
               fontSize: MediaQuery.of(context).size.width / 100 * 5,
               fontWeight: FontWeight.w600,
@@ -179,15 +179,15 @@ class _SignInScreenState extends State<SignInScreen> {
           ),
         ),
         onPressed: () async {
-          if (_phoneInputController.text != "") {
+          if (_phoneInputController.text != '') {
             _completePhoneNumber =
-                "$_countryCodeInput${_phoneInputController.text}";
+                '_countryCodeInput${_phoneInputController.text}';
 
             final PhoneVerificationCompleted verificationCompleted =
                 (AuthCredential phoneAuthCredential) {
               data.auth.signInWithCredential(phoneAuthCredential).then((value) {
                 setState(() {
-                  _message = "success";
+                  _message = 'success';
                   ExtendedNavigator.root
                       .pushAndRemoveUntil(Routes.homeScreen, (route) => false);
                 });
@@ -224,7 +224,7 @@ class _SignInScreenState extends State<SignInScreen> {
             );
           } else {
             setState(() {
-              _message = "Please input phone number!!";
+              _message = 'Please input phone number!!';
             });
           }
         },
@@ -240,7 +240,7 @@ class _SignInScreenState extends State<SignInScreen> {
       builder: (context) {
         return AlertDialog(
           title: Text(
-            "Verification Code",
+            'Verification Code',
             style: TextStyle(
               fontSize: MediaQuery.of(context).size.width / 100 * 5,
               color: Colors.black87,
@@ -251,7 +251,7 @@ class _SignInScreenState extends State<SignInScreen> {
               cursorColor: Colors.black45,
               decoration: InputDecoration(
                 border: InputBorder.none,
-                hintText: "Your Code",
+                hintText: 'Your Code',
                 hintStyle: TextStyle(
                   fontSize: MediaQuery.of(context).size.width / 100 * 5,
                   color: Colors.black38,
@@ -272,7 +272,7 @@ class _SignInScreenState extends State<SignInScreen> {
             FlatButton(
               child: Center(
                 child: Text(
-                  "Send Code",
+                  'Send Code',
                   style: TextStyle(
                     fontSize: MediaQuery.of(context).size.width / 100 * 5,
                     fontWeight: FontWeight.w600,
@@ -287,14 +287,14 @@ class _SignInScreenState extends State<SignInScreen> {
                   smsCode: _verificationCodeInputController.text,
                 );
 
-                final User user = await data.auth
+                var user = await data.auth
                     .signInWithCredential(credential)
                     .then((value) => value.user)
                     .catchError(
                   (e) {
                     setState(() {
                       _message =
-                          "Wrong Code Verification, Please resend the otp sms code.";
+                          'Wrong Code Verification, Please resend the otp sms code.';
                     });
                     Navigator.of(context).pop();
                     _verificationCodeInputController.clear();
@@ -307,11 +307,11 @@ class _SignInScreenState extends State<SignInScreen> {
 
                 setState(() {
                   if (user != null) {
-                    _message = "success";
+                    _message = 'success';
                     ExtendedNavigator.root.pushAndRemoveUntil(
                         Routes.homeScreen, (route) => false);
                   } else {
-                    _message = "Sign in failed";
+                    _message = 'Sign in failed';
                     _verificationCodeInputController.clear();
                     Navigator.of(context).pop();
                   }

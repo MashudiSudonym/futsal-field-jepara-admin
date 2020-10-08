@@ -6,15 +6,15 @@ import 'package:futsal_field_jepara_admin/utils/auth_guard.dart';
 
 @MaterialAutoRouter(
   routes: <AutoRoute>[
-    MaterialRoute(
+    AdaptiveRoute(
       page: HomeScreen,
       guards: [AuthGuard],
       initial: true,
     ),
-    MaterialRoute(
+    AdaptiveRoute(
       page: SignInScreen,
     ),
-    MaterialRoute(
+    AdaptiveRoute(
       page: CompleteUserProfileDataScreen,
       guards: [AuthGuard],
     ),

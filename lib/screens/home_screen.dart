@@ -38,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
       key: _scaffoldKey,
       appBar: AppBar(
         title: Text(
-          "Futsal Field Jepara - Admin",
+          'Futsal Field Jepara - Admin',
         ),
       ),
       body: AnimationLimiter(

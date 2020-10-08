@@ -7,7 +7,6 @@
 // ignore_for_file: public_member_api_docs
 
 import 'package:auto_route/auto_route.dart';
-import 'package:flutter/material.dart';
 
 import '../screens/complete_user_profile_data_screen.dart';
 import '../screens/home_screen.dart';
@@ -39,19 +38,19 @@ class Router extends RouterBase {
   Map<Type, AutoRouteFactory> get pagesMap => _pagesMap;
   final _pagesMap = <Type, AutoRouteFactory>{
     HomeScreen: (data) {
-      return MaterialPageRoute<dynamic>(
+      return buildAdaptivePageRoute<dynamic>(
         builder: (context) => HomeScreen(),
         settings: data,
       );
     },
     SignInScreen: (data) {
-      return MaterialPageRoute<dynamic>(
+      return buildAdaptivePageRoute<dynamic>(
         builder: (context) => SignInScreen(),
         settings: data,
       );
     },
     CompleteUserProfileDataScreen: (data) {
-      return MaterialPageRoute<dynamic>(
+      return buildAdaptivePageRoute<dynamic>(
         builder: (context) => CompleteUserProfileDataScreen(),
         settings: data,
       );
