@@ -13,10 +13,10 @@ class SignInScreen extends StatefulWidget {
 class _SignInScreenState extends State<SignInScreen> {
   final _phoneInputController = TextEditingController();
   final _verificationCodeInputController = TextEditingController();
-  String _countryCodeInput;
-  String _completePhoneNumber;
-  String _message = '';
-  String _verificationId;
+  var countryCodeInput;
+  var completePhoneNumber;
+  var message = '';
+  var verification;
 
   @override
   void dispose() {
@@ -74,17 +74,17 @@ class _SignInScreenState extends State<SignInScreen> {
               height: MediaQuery.of(context).size.height / 100 * 1,
             ),
             Opacity(
-              opacity: (_message != '' && _message != null) ? 1 : 0,
+              opacity: (message != '' && message != null) ? 1 : 0,
               child: Padding(
                 padding: EdgeInsets.symmetric(
                   horizontal: MediaQuery.of(context).size.width / 100 * 4,
                 ),
                 child: Text(
-                  _message,
+                  message,
                   style: TextStyle(
                     fontSize: MediaQuery.of(context).size.width / 100 * 3,
                     color:
-                        _message != 'success' ? Colors.red[400] : Colors.green,
+                        message != 'success' ? Colors.red[400] : Colors.green,
                   ),
                 ),
               ),
@@ -114,7 +114,7 @@ class _SignInScreenState extends State<SignInScreen> {
               color: Colors.grey[100],
             ),
             child: CountryCodePicker(
-              onInit: (countryCode) => _countryCodeInput = countryCode.dialCode,
+              onInit: (countryCode) => countryCodeInput = countryCode.dialCode,
               initialSelection: 'ID',
               showCountryOnly: false,
               alignLeft: false,
@@ -180,14 +180,15 @@ class _SignInScreenState extends State<SignInScreen> {
         ),
         onPressed: () async {
           if (_phoneInputController.text != '') {
-            _completePhoneNumber =
-                '_countryCodeInput${_phoneInputController.text}';
+            completePhoneNumber =
+                '$countryCodeInput${_phoneInputController.text}';
+            print(completePhoneNumber);
 
             final PhoneVerificationCompleted verificationCompleted =
                 (AuthCredential phoneAuthCredential) {
               data.auth.signInWithCredential(phoneAuthCredential).then((value) {
                 setState(() {
-                  _message = 'success';
+                  message = 'success';
                   ExtendedNavigator.root
                       .pushAndRemoveUntil(Routes.homeScreen, (route) => false);
                 });
@@ -199,23 +200,23 @@ class _SignInScreenState extends State<SignInScreen> {
             final PhoneVerificationFailed verificationFailed =
                 (FirebaseAuthException authException) {
               setState(() {
-                _message = authException.message;
+                message = authException.message;
               });
             };
 
             final PhoneCodeSent codeSent =
                 (String verificationId, [int forceResendingToken]) async {
-              _verificationId = verificationId;
+              verification = verificationId;
               _dialogVerification(context);
             };
 
             final PhoneCodeAutoRetrievalTimeout codeAutoRetrievalTimeout =
                 (String verificationId) {
-              _verificationId = verificationId;
+              verification = verificationId;
             };
 
             await data.auth.verifyPhoneNumber(
-              phoneNumber: _completePhoneNumber,
+              phoneNumber: completePhoneNumber,
               timeout: const Duration(seconds: 5),
               verificationCompleted: verificationCompleted,
               verificationFailed: verificationFailed,
@@ -224,7 +225,7 @@ class _SignInScreenState extends State<SignInScreen> {
             );
           } else {
             setState(() {
-              _message = 'Please input phone number!!';
+              message = 'Please input phone number!!';
             });
           }
         },
@@ -283,7 +284,7 @@ class _SignInScreenState extends State<SignInScreen> {
               onPressed: () async {
                 final PhoneAuthCredential credential =
                     PhoneAuthProvider.credential(
-                  verificationId: _verificationId,
+                  verificationId: verification,
                   smsCode: _verificationCodeInputController.text,
                 );
 
@@ -293,7 +294,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     .catchError(
                   (e) {
                     setState(() {
-                      _message =
+                      message =
                           'Wrong Code Verification, Please resend the otp sms code.';
                     });
                     Navigator.of(context).pop();
@@ -307,11 +308,11 @@ class _SignInScreenState extends State<SignInScreen> {
 
                 setState(() {
                   if (user != null) {
-                    _message = 'success';
+                    message = 'success';
                     ExtendedNavigator.root.pushAndRemoveUntil(
                         Routes.homeScreen, (route) => false);
                   } else {
-                    _message = 'Sign in failed';
+                    message = 'Sign in failed';
                     _verificationCodeInputController.clear();
                     Navigator.of(context).pop();
                   }

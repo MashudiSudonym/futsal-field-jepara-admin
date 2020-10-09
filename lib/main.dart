@@ -3,7 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:futsal_field_jepara_admin/utils/auth_guard.dart';
-import 'package:futsal_field_jepara_admin/utils/router.gr.dart' as routerGr;
+import 'package:futsal_field_jepara_admin/utils/router.gr.dart' as router_gr;
 import 'package:hexcolor/hexcolor.dart';
 
 void main() {
@@ -56,8 +56,8 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
         fontFamily: 'Poppins',
       ),
-      builder: ExtendedNavigator<routerGr.Router>(
-        router: routerGr.Router(),
+      builder: ExtendedNavigator<router_gr.Router>(
+        router: router_gr.Router(),
         guards: [AuthGuard()],
       ),
     );

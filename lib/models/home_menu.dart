@@ -19,25 +19,25 @@ class HomeMenu {
 List<HomeMenu> homeMenu = [
   HomeMenu(
     id: 1,
-    name: "Informasi Lapangan",
+    name: 'Informasi Lapangan',
     icon: FontAwesomeIcons.bullhorn,
     color: Colors.orange[600],
   ),
   HomeMenu(
     id: 2,
-    name: "Pesanan Masuk",
+    name: 'Pesanan Masuk',
     icon: FontAwesomeIcons.receipt,
     color: Colors.blue[600],
   ),
   HomeMenu(
     id: 3,
-    name: "Profil Admin",
+    name: 'Profil Admin',
     icon: FontAwesomeIcons.userSecret,
     color: Colors.indigoAccent,
   ),
   HomeMenu(
     id: 4,
-    name: "Keluar Akun",
+    name: 'Keluar Akun',
     icon: FontAwesomeIcons.powerOff,
     color: Colors.red,
   ),
