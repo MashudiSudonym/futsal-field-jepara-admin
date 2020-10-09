@@ -84,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
               _showSnackBar(index);
               break;
             case 3:
-              _showSnackBar(index);
+              await ExtendedNavigator.root.push(Routes.userProfileScreen);
               break;
             case 4:
               await data.userSignOut().whenComplete(() {
