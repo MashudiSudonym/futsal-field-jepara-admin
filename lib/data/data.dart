@@ -24,6 +24,10 @@ Future<void> uploadUserProfileByUserId(String uid, String name, String address,
   return fireStore.collection('users').doc(uid).set(data);
 }
 
+Future<DocumentSnapshot> loadRealTimeUsersDataByUserId(String uid) {
+  return fireStore.collection('users').doc(uid).get();
+}
+
 // auth section
 Future<void> userSignOut() {
   return auth.signOut();
