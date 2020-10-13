@@ -82,21 +82,6 @@ class _CompleteUserProfileDataScreenState
         ),
         body: Stack(
           children: [
-            ListView(
-              children: [
-                Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      // image user profile
-                      _widgetSelectImageProfile(context),
-                      // form user profile information
-                      _widgetFormProfile(context),
-                    ],
-                  ),
-                ),
-              ],
-            ),
             (isLoading && typeOperation == TypeOperation.upload)
                 ? Container(
                     width: double.infinity,
@@ -109,7 +94,19 @@ class _CompleteUserProfileDataScreenState
                       ),
                     ),
                   )
-                : Container(),
+                : SingleChildScrollView(
+                    child: Container(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          // image user profile
+                          _widgetSelectImageProfile(context),
+                          // form user profile information
+                          _widgetFormProfile(context),
+                        ],
+                      ),
+                    ),
+                  ),
           ],
         ),
       ),

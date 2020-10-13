@@ -24,6 +24,19 @@ Future<void> uploadUserProfileByUserId(String uid, String name, String address,
   return fireStore.collection('users').doc(uid).set(data);
 }
 
+Future<void> updateUserProfileByUserId(String uid, String name, String address,
+    String phone, String imageProfile, String email) {
+  var data = <String, dynamic>{
+    'uid': uid,
+    'name': name,
+    'email': email,
+    'phone': phone,
+    'address': address,
+    'imageProfile': imageProfile,
+  };
+  return fireStore.collection('users').doc(uid).update(data);
+}
+
 Future<DocumentSnapshot> loadRealTimeUsersDataByUserId(String uid) {
   return fireStore.collection('users').doc(uid).get();
 }
