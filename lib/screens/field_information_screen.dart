@@ -14,6 +14,7 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text('Informasi Lapangan'),
       ),
@@ -88,6 +89,9 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
   void _showSnackBar(int index) {
     _scaffoldKey.currentState.showSnackBar(
       SnackBar(
+        backgroundColor: Colors.lightBlue,
+        behavior: SnackBarBehavior.floating,
+        padding: EdgeInsets.all(16.0),
         content: Text(
           fieldInformationMenu[index].name,
         ),
