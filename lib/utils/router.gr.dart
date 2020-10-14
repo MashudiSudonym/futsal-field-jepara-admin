@@ -12,6 +12,7 @@ import '../screens/complete_user_profile_data_screen.dart';
 import '../screens/edit_user_profile_screen.dart';
 import '../screens/field_information_screen.dart';
 import '../screens/home_screen.dart';
+import '../screens/order_screen.dart';
 import '../screens/sign_in_screen.dart';
 import '../screens/user_profile_screen.dart';
 import 'auth_guard.dart';
@@ -24,6 +25,7 @@ class Routes {
   static const String userProfileScreen = '/user-profile-screen';
   static const String editUserProfileScreen = '/edit-user-profile-screen';
   static const String fieldInformationScreen = '/field-information-screen';
+  static const String orderScreen = '/order-screen';
   static const all = <String>{
     homeScreen,
     signInScreen,
@@ -31,6 +33,7 @@ class Routes {
     userProfileScreen,
     editUserProfileScreen,
     fieldInformationScreen,
+    orderScreen,
   };
 }
 
@@ -48,6 +51,7 @@ class Router extends RouterBase {
         page: EditUserProfileScreen, guards: [AuthGuard]),
     RouteDef(Routes.fieldInformationScreen,
         page: FieldInformationScreen, guards: [AuthGuard]),
+    RouteDef(Routes.orderScreen, page: OrderScreen, guards: [AuthGuard]),
   ];
   @override
   Map<Type, AutoRouteFactory> get pagesMap => _pagesMap;
@@ -85,6 +89,12 @@ class Router extends RouterBase {
     FieldInformationScreen: (data) {
       return buildAdaptivePageRoute<dynamic>(
         builder: (context) => FieldInformationScreen(),
+        settings: data,
+      );
+    },
+    OrderScreen: (data) {
+      return buildAdaptivePageRoute<dynamic>(
+        builder: (context) => OrderScreen(),
         settings: data,
       );
     },

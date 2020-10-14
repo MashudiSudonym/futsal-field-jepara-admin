@@ -12,8 +12,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
-
   @override
   void initState() {
     super.initState();
@@ -35,7 +33,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldKey,
       appBar: AppBar(
         title: Text(
           'Futsal Field Jepara - Admin',
@@ -81,7 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
               await ExtendedNavigator.root.push(Routes.fieldInformationScreen);
               break;
             case 2:
-              _showSnackBar(index);
+              await ExtendedNavigator.root.push(Routes.orderScreen);
               break;
             case 3:
               await ExtendedNavigator.root.push(Routes.userProfileScreen);
@@ -119,16 +116,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  void _showSnackBar(int index) {
-    _scaffoldKey.currentState.showSnackBar(
-      SnackBar(
-        content: Text(
-          homeMenu[index].name,
         ),
       ),
     );
