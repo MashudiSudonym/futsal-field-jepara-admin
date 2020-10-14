@@ -42,9 +42,7 @@ Future<DocumentSnapshot> loadRealTimeUsersDataByUserId(String uid) {
 }
 
 // auth section
-Future<void> userSignOut() {
-  return auth.signOut();
-}
+Future<void> userSignOut() => auth.signOut();
 
 String userPhoneNumber() => auth.currentUser.phoneNumber;
 

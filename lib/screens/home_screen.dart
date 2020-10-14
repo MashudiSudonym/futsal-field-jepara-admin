@@ -78,7 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
         onTap: () async {
           switch (homeMenu[index].id) {
             case 1:
-              _showSnackBar(index);
+              await ExtendedNavigator.root.push(Routes.fieldInformationScreen);
               break;
             case 2:
               _showSnackBar(index);
