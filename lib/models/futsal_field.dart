@@ -10,6 +10,7 @@ class FutsalFields {
   final String name;
   final int numberOfField;
   final String openingHours;
+  final String owner;
   final String phone;
   final String uid;
 
@@ -23,6 +24,7 @@ class FutsalFields {
         assert(map['name'] != null),
         assert(map['numberOfField'] != null),
         assert(map['openingHours'] != null),
+        assert(map['owner'] != null),
         assert(map['phone'] != null),
         assert(map['uid'] != null),
         address = map['address'],
@@ -34,6 +36,7 @@ class FutsalFields {
         name = map['name'],
         numberOfField = map['numberOfField'],
         openingHours = map['openingHours'],
+        owner = map['owner'],
         phone = map['phone'],
         uid = map['uid'];
 
