@@ -36,59 +36,107 @@ class _OrderScreenState extends State<OrderScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Pesanan Masuk'),
-        ),
-        body: futsalUID == ''
-            ? Center(
-                child: Lottie.asset(
-                  'assets/loading.json',
-                  height: MediaQuery.of(context).size.height / 100 * 25,
-                ),
-              )
-            : StreamBuilder<QuerySnapshot>(
-                stream: data.loadUserOrder(futsalUID),
-                builder: (context, snapshot) {
-                  return ListView.builder(
-                    itemCount: snapshot.data.docs.length,
-                    itemBuilder: (context, index) {
-                      var _userOrder =
-                          UserOrder.fromMap(snapshot.data.docs[index].data());
+      appBar: AppBar(
+        title: Text('Pesanan Masuk'),
+      ),
+      body: futsalUID == ''
+          ? Center(
+              child: Lottie.asset(
+                'assets/loading.json',
+                height: MediaQuery.of(context).size.height / 100 * 25,
+              ),
+            )
+          : StreamBuilder<QuerySnapshot>(
+              stream: data.loadUserOrder(futsalUID),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return Center(
+                    child: Lottie.asset(
+                      'assets/nodata.json',
+                      height: MediaQuery.of(context).size.height / 100 * 25,
+                    ),
+                  );
+                }
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Lottie.asset(
+                      'assets/error.json',
+                      height: MediaQuery.of(context).size.height / 100 * 25,
+                    ),
+                  );
+                }
 
-                      if (!snapshot.hasData) {
-                        return Center(
-                          child: Lottie.asset(
-                            'assets/nodata.json',
-                            height:
-                                MediaQuery.of(context).size.height / 100 * 25,
-                          ),
-                        );
-                      }
-                      if (snapshot.hasError) {
-                        return Center(
-                          child: Lottie.asset(
-                            'assets/error.json',
-                            height:
-                                MediaQuery.of(context).size.height / 100 * 25,
-                          ),
-                        );
-                      }
+                switch (snapshot.connectionState) {
+                  case ConnectionState.waiting:
+                    return Center(
+                      child: Lottie.asset(
+                        'assets/nodata.json',
+                        height: MediaQuery.of(context).size.height / 100 * 25,
+                      ),
+                    );
+                  default:
+                    return ListView.builder(
+                      physics: BouncingScrollPhysics(),
+                      itemCount: snapshot.data.docs.length,
+                      itemBuilder: (context, index) {
+                        var _userOrder =
+                            UserOrder.fromMap(snapshot.data.docs[index].data());
 
-                      return AnimationConfiguration.staggeredList(
-                        position: index,
-                        duration: Duration(milliseconds: 375),
-                        child: SlideAnimation(
-                          child: FadeInAnimation(
-                            child: ListTile(
-                              onTap: () {},
-                              title: Text(_userOrder.futsalFieldName),
+                        return AnimationConfiguration.staggeredList(
+                          position: index,
+                          duration: Duration(milliseconds: 375),
+                          child: SlideAnimation(
+                            child: FadeInAnimation(
+                              child: Padding(
+                                padding: EdgeInsets.all(
+                                  MediaQuery.of(context).size.width / 100 * 3,
+                                ),
+                                child: Card(
+                                  elevation: 4.0,
+                                  child: ListTile(
+                                    onTap: () {},
+                                    title: Text(
+                                      _userOrder.futsalFieldName,
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize:
+                                            MediaQuery.of(context).size.width /
+                                                100 *
+                                                5.5,
+                                      ),
+                                    ),
+                                    subtitle: Padding(
+                                      padding: EdgeInsets.all(
+                                        MediaQuery.of(context).size.width /
+                                            100 *
+                                            3,
+                                      ),
+                                      child: Text(
+                                        (_userOrder.orderStatus != 0)
+                                            ? "Tanggal Pesan : ${_userOrder.orderDate.replaceAll("-", "/")}\nJam Pesan : ${_userOrder.orderTime}\nJenis Lapangan : ${_userOrder.fieldType}\nHarga : Rp.${_userOrder.price}\nStatus Pesanan : Pesanan Diterima"
+                                            : "Tanggal Pesan : ${_userOrder.orderDate.replaceAll("-", "/")}\nJam Pesan : ${_userOrder.orderTime}\nJenis Lapangan : ${_userOrder.fieldType}\nHarga : Rp.${_userOrder.price}\nStatus Pesanan : Menunggu",
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .width /
+                                              100 *
+                                              4,
+                                        ),
+                                      ),
+                                    ),
+                                    isThreeLine: true,
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                      );
-                    },
-                  );
-                },
-              ));
+                        );
+                      },
+                    );
+                }
+              },
+            ),
+    );
   }
 }
