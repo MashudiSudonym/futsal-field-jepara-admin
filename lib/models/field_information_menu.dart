@@ -27,9 +27,4 @@ List<FieldInformationMenu> fieldInformationMenu = [
     name: 'Jadwal Lapangan',
     icon: FontAwesomeIcons.bullhorn,
   ),
-  FieldInformationMenu(
-    id: 3,
-    name: 'Tambah Lapangan',
-    icon: FontAwesomeIcons.plusCircle,
-  ),
 ];

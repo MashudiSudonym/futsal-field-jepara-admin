@@ -1,7 +1,9 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:futsal_field_jepara_admin/models/field_information_menu.dart';
+import 'package:futsal_field_jepara_admin/utils/router.gr.dart';
 
 class FieldInformationScreen extends StatefulWidget {
   @override
@@ -44,16 +46,13 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () async {
+        onTap: () {
           switch (fieldInformationMenu[index].id) {
             case 1:
-              _showSnackBar(index);
+              ExtendedNavigator.root.push(Routes.listFieldScreen);
               break;
             case 2:
-              _showSnackBar(index);
-              break;
-            case 3:
-              _showSnackBar(index);
+              ExtendedNavigator.root.push(Routes.scheduleFieldScreen);
               break;
             default:
           }
@@ -81,19 +80,6 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  void _showSnackBar(int index) {
-    _scaffoldKey.currentState.showSnackBar(
-      SnackBar(
-        backgroundColor: Colors.lightBlue,
-        behavior: SnackBarBehavior.floating,
-        padding: EdgeInsets.all(16.0),
-        content: Text(
-          fieldInformationMenu[index].name,
         ),
       ),
     );

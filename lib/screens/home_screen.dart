@@ -72,19 +72,19 @@ class _HomeScreenState extends State<HomeScreen> {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () async {
+        onTap: () {
           switch (homeMenu[index].id) {
             case 1:
-              await ExtendedNavigator.root.push(Routes.fieldInformationScreen);
+              ExtendedNavigator.root.push(Routes.fieldInformationScreen);
               break;
             case 2:
-              await ExtendedNavigator.root.push(Routes.orderScreen);
+              ExtendedNavigator.root.push(Routes.orderScreen);
               break;
             case 3:
-              await ExtendedNavigator.root.push(Routes.userProfileScreen);
+              ExtendedNavigator.root.push(Routes.userProfileScreen);
               break;
             case 4:
-              await data.userSignOut().whenComplete(() {
+              data.userSignOut().whenComplete(() {
                 ExtendedNavigator.root
                     .pushAndRemoveUntil(Routes.signInScreen, (route) => false);
               });
