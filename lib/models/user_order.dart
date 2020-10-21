@@ -9,6 +9,7 @@ class UserOrder {
   final String orderTime;
   final int price;
   final String uid;
+  final String userName;
   final String userUID;
 
   UserOrder.fromMap(Map<String, dynamic> map)
@@ -20,6 +21,7 @@ class UserOrder {
         assert(map['orderTime'] != null),
         assert(map['price'] != null),
         assert(map['uid'] != null),
+        assert(map['userName'] != null),
         assert(map['userUID'] != null),
         fieldType = map['fieldType'],
         futsalFieldName = map['futsalFieldName'],
@@ -29,6 +31,7 @@ class UserOrder {
         orderTime = map['orderTime'],
         price = map['price'],
         uid = map['uid'],
+        userName = map['userName'],
         userUID = map['userUID'];
 
   UserOrder.fromSnapshot(DocumentSnapshot snapshot)

@@ -96,7 +96,7 @@ class _OrderScreenState extends State<OrderScreen> {
                                   child: ListTile(
                                     onTap: () {},
                                     title: Text(
-                                      _userOrder.futsalFieldName,
+                                      _userOrder.userName,
                                       style: TextStyle(
                                         color: Colors.black,
                                         fontSize:
@@ -113,8 +113,8 @@ class _OrderScreenState extends State<OrderScreen> {
                                       ),
                                       child: Text(
                                         (_userOrder.orderStatus != 0)
-                                            ? "Tanggal Pesan : ${_userOrder.orderDate.replaceAll("-", "/")}\nJam Pesan : ${_userOrder.orderTime}\nJenis Lapangan : ${_userOrder.fieldType}\nHarga : Rp.${_userOrder.price}\nStatus Pesanan : Pesanan Diterima"
-                                            : "Tanggal Pesan : ${_userOrder.orderDate.replaceAll("-", "/")}\nJam Pesan : ${_userOrder.orderTime}\nJenis Lapangan : ${_userOrder.fieldType}\nHarga : Rp.${_userOrder.price}\nStatus Pesanan : Menunggu",
+                                            ? "Lapangan : ${_userOrder.futsalFieldName}\nTanggal Pesan : ${_userOrder.orderDate.replaceAll("-", "/")}\nJam Pesan : ${_userOrder.orderTime}\nJenis Lapangan : ${_userOrder.fieldType}\nHarga : Rp.${_userOrder.price}\nStatus Pesanan : Pesanan Diterima"
+                                            : "Lapangan : ${_userOrder.futsalFieldName}\nTanggal Pesan : ${_userOrder.orderDate.replaceAll("-", "/")}\nJam Pesan : ${_userOrder.orderTime}\nJenis Lapangan : ${_userOrder.fieldType}\nHarga : Rp.${_userOrder.price}\nStatus Pesanan : Menunggu",
                                         style: TextStyle(
                                           color: Colors.black,
                                           fontSize: MediaQuery.of(context)
