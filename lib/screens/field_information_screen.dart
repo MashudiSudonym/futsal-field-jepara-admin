@@ -68,7 +68,10 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
                           child: Card(
                             elevation: 4.0,
                             child: ListTile(
-                              onTap: () {},
+                              onTap: () {
+                                ExtendedNavigator.root
+                                    .push(Routes.fieldDetailInformationScreen);
+                              },
                               title: Column(
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: <Widget>[
@@ -140,6 +143,7 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
         onPressed: () {
           ExtendedNavigator.root.push(Routes.addNewFieldScreen);
         },
+        backgroundColor: Colors.blue,
         tooltip: 'tambah lapangan baru',
         child: FaIcon(FontAwesomeIcons.plus),
       ),
