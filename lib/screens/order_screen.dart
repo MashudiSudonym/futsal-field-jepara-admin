@@ -1,9 +1,11 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:futsal_field_jepara_admin/data/data.dart' as data;
 import 'package:futsal_field_jepara_admin/models/futsal_field.dart';
 import 'package:futsal_field_jepara_admin/models/user_order.dart';
+import 'package:futsal_field_jepara_admin/utils/router.gr.dart';
 import 'package:lottie/lottie.dart';
 
 class OrderScreen extends StatefulWidget {
@@ -94,7 +96,10 @@ class _OrderScreenState extends State<OrderScreen> {
                                 child: Card(
                                   elevation: 4.0,
                                   child: ListTile(
-                                    onTap: () {},
+                                    onTap: () {
+                                      ExtendedNavigator.root
+                                          .push(Routes.orderDetailScreen);
+                                    },
                                     title: Text(
                                       _userOrder.userName,
                                       style: TextStyle(

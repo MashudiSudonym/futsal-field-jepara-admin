@@ -5,6 +5,7 @@ import 'package:futsal_field_jepara_admin/screens/edit_user_profile_screen.dart'
 import 'package:futsal_field_jepara_admin/screens/field_detail_information_screen.dart';
 import 'package:futsal_field_jepara_admin/screens/field_information_screen.dart';
 import 'package:futsal_field_jepara_admin/screens/home_screen.dart';
+import 'package:futsal_field_jepara_admin/screens/order_detail_screen.dart';
 import 'package:futsal_field_jepara_admin/screens/order_screen.dart';
 import 'package:futsal_field_jepara_admin/screens/sign_in_screen.dart';
 import 'package:futsal_field_jepara_admin/screens/user_profile_screen.dart';
@@ -46,6 +47,10 @@ import 'package:futsal_field_jepara_admin/utils/auth_guard.dart';
     ),
     AdaptiveRoute(
       page: FieldDetailInformationScreen,
+      guards: [AuthGuard],
+    ),
+    AdaptiveRoute(
+      page: OrderDetailScreen,
       guards: [AuthGuard],
     ),
   ],
