@@ -1,11 +1,10 @@
 import 'package:auto_route/auto_route_annotations.dart';
+import 'package:futsal_field_jepara_admin/screens/add_new_field_screen.dart';
 import 'package:futsal_field_jepara_admin/screens/complete_user_profile_data_screen.dart';
 import 'package:futsal_field_jepara_admin/screens/edit_user_profile_screen.dart';
 import 'package:futsal_field_jepara_admin/screens/field_information_screen.dart';
 import 'package:futsal_field_jepara_admin/screens/home_screen.dart';
-import 'package:futsal_field_jepara_admin/screens/list_field_screen.dart';
 import 'package:futsal_field_jepara_admin/screens/order_screen.dart';
-import 'package:futsal_field_jepara_admin/screens/schedule_field_screen.dart';
 import 'package:futsal_field_jepara_admin/screens/sign_in_screen.dart';
 import 'package:futsal_field_jepara_admin/screens/user_profile_screen.dart';
 import 'package:futsal_field_jepara_admin/utils/auth_guard.dart';
@@ -41,11 +40,7 @@ import 'package:futsal_field_jepara_admin/utils/auth_guard.dart';
       guards: [AuthGuard],
     ),
     AdaptiveRoute(
-      page: ListFieldScreen,
-      guards: [AuthGuard],
-    ),
-    AdaptiveRoute(
-      page: ScheduleFieldScreen,
+      page: AddNewFieldScreen,
       guards: [AuthGuard],
     ),
   ],
