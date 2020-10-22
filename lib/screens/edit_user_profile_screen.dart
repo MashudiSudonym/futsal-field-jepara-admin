@@ -77,7 +77,7 @@ class _EditUserProfileScreenState extends State<EditUserProfileScreen> {
           title: Text('Edit Profil'),
         ),
         body: FutureBuilder<DocumentSnapshot>(
-          future: data.loadRealTimeUsersDataByUserId(data.userUID()),
+          future: data.loadUserProfileDataByUserId(data.userUID()),
           builder:
               (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
             if (snapshot.hasError) {

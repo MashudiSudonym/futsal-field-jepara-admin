@@ -20,7 +20,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         title: Text('Profil Admin'),
       ),
       body: FutureBuilder<DocumentSnapshot>(
-        future: data.loadRealTimeUsersDataByUserId(data.userUID()),
+        future: data.loadUserProfileDataByUserId(data.userUID()),
         builder:
             (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
           if (snapshot.hasError) {
