@@ -22,7 +22,7 @@ class _OrderScreenState extends State<OrderScreen> {
   }
 
   void _getFutsalUID() {
-    data.getFutsalUID(data.userUID()).then((snapshot) {
+    data.loadFutsalFieldUID(data.userUID()).then((snapshot) {
       snapshot.docs.forEach((element) {
         var futsal = FutsalFields.fromMap(element.data());
 

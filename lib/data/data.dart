@@ -7,7 +7,14 @@ final FirebaseAuth auth = FirebaseAuth.instance;
 final FirebaseStorage storage = FirebaseStorage.instance;
 
 // firestore section
-Future<QuerySnapshot> getFutsalUID(String ownerUID) {
+Stream<QuerySnapshot> loadFutsalField(String ownerUID) {
+  return fireStore
+      .collection('futsalFields')
+      .where('owner', isEqualTo: ownerUID)
+      .snapshots();
+}
+
+Future<QuerySnapshot> loadFutsalFieldUID(String ownerUID) {
   return fireStore
       .collection('futsalFields')
       .where('owner', isEqualTo: ownerUID)
