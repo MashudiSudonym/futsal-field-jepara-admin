@@ -7,6 +7,14 @@ final FirebaseAuth auth = FirebaseAuth.instance;
 final FirebaseStorage storage = FirebaseStorage.instance;
 
 // firestore section
+// update order status on user order
+Future<void> updateOrderStatusByOrderUID(String orderUID, int orderStatus) {
+  return fireStore
+      .collection('userOrders')
+      .doc(orderUID)
+      .update({'orderStatus': orderStatus});
+}
+
 // get detail of user order by user order id
 Future<DocumentSnapshot> loadOrderDetailByOrderUID(String orderUID) {
   return fireStore.collection('userOrders').doc(orderUID).get();

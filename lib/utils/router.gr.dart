@@ -127,10 +127,21 @@ class Router extends RouterBase {
       );
     },
     OrderDetailScreen: (data) {
+      final args = data.getArgs<OrderDetailScreenArguments>(nullOk: false);
       return buildAdaptivePageRoute<dynamic>(
-        builder: (context) => OrderDetailScreen(),
+        builder: (context) => OrderDetailScreen(uid: args.uid),
         settings: data,
       );
     },
   };
+}
+
+/// ************************************************************************
+/// Arguments holder classes
+/// *************************************************************************
+
+/// OrderDetailScreen arguments holder class
+class OrderDetailScreenArguments {
+  final String uid;
+  OrderDetailScreenArguments({@required this.uid});
 }

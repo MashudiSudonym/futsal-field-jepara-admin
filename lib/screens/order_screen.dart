@@ -97,8 +97,12 @@ class _OrderScreenState extends State<OrderScreen> {
                                   elevation: 4.0,
                                   child: ListTile(
                                     onTap: () {
-                                      ExtendedNavigator.root
-                                          .push(Routes.orderDetailScreen);
+                                      ExtendedNavigator.root.push(
+                                        Routes.orderDetailScreen,
+                                        arguments: OrderDetailScreenArguments(
+                                          uid: _userOrder.uid,
+                                        ),
+                                      );
                                     },
                                     title: Text(
                                       _userOrder.userName,
@@ -117,9 +121,11 @@ class _OrderScreenState extends State<OrderScreen> {
                                             3,
                                       ),
                                       child: Text(
-                                        (_userOrder.orderStatus != 0)
-                                            ? "Lapangan : ${_userOrder.futsalFieldName}\nTanggal Pesan : ${_userOrder.orderDate.replaceAll("-", "/")}\nJam Pesan : ${_userOrder.orderTime}\nJenis Lapangan : ${_userOrder.fieldType}\nHarga : Rp.${_userOrder.price}\nStatus Pesanan : Pesanan Diterima"
-                                            : "Lapangan : ${_userOrder.futsalFieldName}\nTanggal Pesan : ${_userOrder.orderDate.replaceAll("-", "/")}\nJam Pesan : ${_userOrder.orderTime}\nJenis Lapangan : ${_userOrder.fieldType}\nHarga : Rp.${_userOrder.price}\nStatus Pesanan : Menunggu",
+                                        (_userOrder.orderStatus == 2)
+                                            ? "Lapangan : ${_userOrder.futsalFieldName}\nTanggal Pesan : ${_userOrder.orderDate.replaceAll("-", "/")}\nJam Pesan : ${_userOrder.orderTime}\nJenis Lapangan : ${_userOrder.fieldType}\nHarga : Rp.${_userOrder.price}\nStatus Pesanan : Pesanan Dibatalkan"
+                                            : (_userOrder.orderStatus != 0)
+                                                ? "Lapangan : ${_userOrder.futsalFieldName}\nTanggal Pesan : ${_userOrder.orderDate.replaceAll("-", "/")}\nJam Pesan : ${_userOrder.orderTime}\nJenis Lapangan : ${_userOrder.fieldType}\nHarga : Rp.${_userOrder.price}\nStatus Pesanan : Pesanan Diterima"
+                                                : "Lapangan : ${_userOrder.futsalFieldName}\nTanggal Pesan : ${_userOrder.orderDate.replaceAll("-", "/")}\nJam Pesan : ${_userOrder.orderTime}\nJenis Lapangan : ${_userOrder.fieldType}\nHarga : Rp.${_userOrder.price}\nStatus Pesanan : Menunggu",
                                         style: TextStyle(
                                           color: Colors.black,
                                           fontSize: MediaQuery.of(context)
