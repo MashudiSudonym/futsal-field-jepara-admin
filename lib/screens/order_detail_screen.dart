@@ -160,11 +160,12 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
         ),
       );
       ticket.text(
-        'Rp. ${_userOrderData.fieldType}',
+        'Rp. ${_userOrderData.price}',
         styles: PosStyles(
-            align: PosAlign.right,
-            width: PosTextSize.size2,
-            height: PosTextSize.size2),
+          align: PosAlign.right,
+          width: PosTextSize.size2,
+          height: PosTextSize.size2,
+        ),
       );
     });
 
@@ -180,9 +181,12 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
 
     final res = await _printerManager
         .printTicket(await ticketFormat(paper))
-        .then((value) => _widgetShowDialogLoading(context).catchError((error) {
-              print('Log : $error');
-            }).whenComplete(() => ExtendedNavigator.root.pop()));
+        .then((value) {
+      ExtendedNavigator.root.pop();
+    }).catchError((error) {
+      print('Log : $error');
+      ExtendedNavigator.root.pop();
+    });
 
     print(res.msg);
   }
@@ -347,9 +351,8 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                     return Column(
                                       children: [
                                         ListTile(
-                                          onTap: () {
+                                          onTap: () async {
                                             _printTicket(_devices[index]);
-                                            ExtendedNavigator.root.pop();
                                           },
                                           title: Text(_devices[index].name),
                                           leading:
