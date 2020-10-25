@@ -7,6 +7,11 @@ final FirebaseAuth auth = FirebaseAuth.instance;
 final FirebaseStorage storage = FirebaseStorage.instance;
 
 // firestore section
+// get field detail information
+Future<DocumentSnapshot> loadFieldDetailInformation(String reference) {
+  return fireStore.doc(reference).get();
+}
+
 // update order status on user order
 Future<void> updateOrderStatusByOrderUID(String orderUID, int orderStatus) {
   return fireStore
@@ -18,6 +23,12 @@ Future<void> updateOrderStatusByOrderUID(String orderUID, int orderStatus) {
 // get detail of user order by user order id
 Future<DocumentSnapshot> loadOrderDetailByOrderUID(String orderUID) {
   return fireStore.collection('userOrders').doc(orderUID).get();
+}
+
+// get detail of futsal field by futsal field UID
+Future<DocumentSnapshot> loadFutsalFieldDetailByFutsalFieldUID(
+    String futsalFieldUID) {
+  return fireStore.collection('futsalFields').doc(futsalFieldUID).get();
 }
 
 // get futsal field list by owner id (active user sign in on this application)

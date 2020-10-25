@@ -69,8 +69,13 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
                             elevation: 4.0,
                             child: ListTile(
                               onTap: () {
-                                ExtendedNavigator.root
-                                    .push(Routes.fieldDetailInformationScreen);
+                                ExtendedNavigator.root.push(
+                                  Routes.fieldDetailInformationScreen,
+                                  arguments:
+                                      FieldDetailInformationScreenArguments(
+                                    futsalFieldUID: _futsalField.uid,
+                                  ),
+                                );
                               },
                               title: Column(
                                 crossAxisAlignment: CrossAxisAlignment.stretch,

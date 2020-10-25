@@ -121,8 +121,11 @@ class Router extends RouterBase {
       );
     },
     FieldDetailInformationScreen: (data) {
+      final args =
+          data.getArgs<FieldDetailInformationScreenArguments>(nullOk: false);
       return buildAdaptivePageRoute<dynamic>(
-        builder: (context) => FieldDetailInformationScreen(),
+        builder: (context) =>
+            FieldDetailInformationScreen(futsalFieldUID: args.futsalFieldUID),
         settings: data,
       );
     },
@@ -139,6 +142,12 @@ class Router extends RouterBase {
 /// ************************************************************************
 /// Arguments holder classes
 /// *************************************************************************
+
+/// FieldDetailInformationScreen arguments holder class
+class FieldDetailInformationScreenArguments {
+  final String futsalFieldUID;
+  FieldDetailInformationScreenArguments({@required this.futsalFieldUID});
+}
 
 /// OrderDetailScreen arguments holder class
 class OrderDetailScreenArguments {
