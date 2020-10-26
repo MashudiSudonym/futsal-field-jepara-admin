@@ -20,6 +20,16 @@ class FieldDetailInformationScreen extends StatefulWidget {
 
 class _FieldDetailInformationScreenState
     extends State<FieldDetailInformationScreen> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  TextEditingController _datePickerController = TextEditingController();
+  String _dateValue = '';
+  DateTime _date = DateTime.now();
+  TextEditingController _startTimePickerController = TextEditingController();
+  String _startTimeValue = '';
+  TimeOfDay _startTime = TimeOfDay.now();
+  TextEditingController _finishTimePickerController = TextEditingController();
+  String _finishTimeValue = '';
+  TimeOfDay _finishTime = TimeOfDay.now();
   int _flooringQuantity;
   int _flooringDayPrice;
   int _flooringNightPrice;
@@ -33,7 +43,7 @@ class _FieldDetailInformationScreenState
     super.initState();
   }
 
-  void _loadFutsalFieldDetail() async {
+  Future<void> _loadFutsalFieldDetail() async {
     await 1.seconds.delay.then((value) {
       data
           .loadFutsalFieldDetailByFutsalFieldUID(widget.futsalFieldUID)
@@ -66,6 +76,73 @@ class _FieldDetailInformationScreenState
         });
       });
     });
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    var _datePicker = await showDatePicker(
+      context: context,
+      initialDate: _date,
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2222),
+    );
+
+    if (_datePicker != null && _datePicker != _date) {
+      setState(() {
+        _date = _datePicker;
+        _dateValue = _date.toString().split(' ')[0];
+        _datePickerController = TextEditingController(text: _dateValue);
+      });
+    }
+  }
+
+  Future<void> _selectStartTime(BuildContext context) async {
+    var _timePicker = await showTimePicker(
+      context: context,
+      initialTime: _startTime,
+      helpText: 'Masukkan jam dan menit dahulu, setelah itu tekan ok',
+      builder: (context, child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(
+            alwaysUse24HourFormat: true,
+          ),
+          child: child,
+        );
+      },
+    );
+
+    if (_timePicker != null && _timePicker != _startTime) {
+      setState(() {
+        _startTime = _timePicker;
+        _startTimeValue = _startTime.format(context);
+        _startTimePickerController =
+            TextEditingController(text: _startTimeValue);
+      });
+    }
+  }
+
+  Future<void> _selectFinishTime(BuildContext context) async {
+    var _timePicker = await showTimePicker(
+      context: context,
+      initialTime: _finishTime,
+      helpText: 'Masukkan jam dan menit dahulu, setelah itu tekan ok',
+      builder: (context, child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(
+            alwaysUse24HourFormat: true,
+          ),
+          child: child,
+        );
+      },
+    );
+
+    if (_timePicker != null && _timePicker != _finishTime) {
+      setState(() {
+        _finishTime = _timePicker;
+        _finishTimeValue = _finishTime.format(context);
+        _finishTimePickerController =
+            TextEditingController(text: _finishTimeValue);
+      });
+    }
   }
 
   @override
@@ -221,8 +298,234 @@ class _FieldDetailInformationScreenState
             SizedBox(
               height: MediaQuery.of(context).size.height / 100 * 2,
             ),
+            // operational time schedule
+            _widgetTextTitle(context, 'Jam Operasional'),
+            Container(
+              padding: EdgeInsets.only(
+                top: MediaQuery.of(context).size.height / 100 * 1.5,
+                left: MediaQuery.of(context).size.height / 100 * 4,
+                right: MediaQuery.of(context).size.height / 100 * 10,
+              ),
+              child: _widgetTableOperationalTime(context, _futsalField),
+            ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height / 100 * 2,
+            ),
+            // field schedule
+            _widgetTextTitle(context, 'Jadwal Lapangan'),
+            Container(
+              padding: EdgeInsets.only(
+                top: MediaQuery.of(context).size.height / 100 * 2,
+                left: MediaQuery.of(context).size.height / 100 * 2,
+                right: MediaQuery.of(context).size.height / 100 * 2,
+              ),
+              child: _widgetDateTimeField(context),
+            ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height / 100 * 2,
+            ),
           ],
         ),
+      ),
+    );
+  }
+
+  Form _widgetDateTimeField(BuildContext context) {
+    return Form(
+      key: _formKey,
+      child: Column(
+        children: [
+          // select date schedule
+          TextFormField(
+            validator: (String value) {
+              if (value.isEmpty) {
+                return 'tentukan tanggal pesan lapangan';
+              }
+              return null;
+            },
+            onTap: () {
+              setState(() {
+                _selectDate(context);
+              });
+            },
+            controller: _datePickerController,
+            readOnly: true,
+            decoration: InputDecoration(
+              hintText: '$_dateValue',
+              labelText: 'Pilih Tanggal',
+              labelStyle: TextStyle(
+                fontSize: MediaQuery.of(context).size.width / 100 * 4,
+                color: Colors.blue,
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Colors.black54,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Colors.black54,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(
+            height: MediaQuery.of(context).size.height / 100 * 1.5,
+          ),
+          // select start time schedule
+          TextFormField(
+            validator: (String value) {
+              if (value.isEmpty) {
+                return 'tentukan jam mulai pesan lapangan';
+              }
+              return null;
+            },
+            onTap: () {
+              setState(() {
+                _selectStartTime(context);
+              });
+            },
+            controller: _startTimePickerController,
+            readOnly: true,
+            decoration: InputDecoration(
+              hintText: '$_startTimeValue',
+              labelText: 'Pilih Jam Mulai',
+              labelStyle: TextStyle(
+                fontSize: MediaQuery.of(context).size.width / 100 * 4,
+                color: Colors.blue,
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Colors.black54,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Colors.black54,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(
+            height: MediaQuery.of(context).size.height / 100 * 1.5,
+          ),
+          // select finish time schedule
+          TextFormField(
+            validator: (String value) {
+              if (value.isEmpty) {
+                return 'tentukan jam selesai pesan lapangan';
+              }
+              return null;
+            },
+            onTap: () {
+              setState(() {
+                _selectFinishTime(context);
+              });
+            },
+            controller: _finishTimePickerController,
+            readOnly: true,
+            decoration: InputDecoration(
+              hintText: '$_finishTimeValue',
+              labelText: 'Pilih Jam Selesai',
+              labelStyle: TextStyle(
+                fontSize: MediaQuery.of(context).size.width / 100 * 4,
+                color: Colors.blue,
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Colors.black54,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Colors.black54,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(
+            height: MediaQuery.of(context).size.height / 100 * 1.5,
+          ),
+          // button submit
+          Container(
+            width: double.infinity,
+            height: MediaQuery.of(context).size.height / 100 * 5,
+            child: ElevatedButton(
+              onPressed: () {
+                if (_formKey.currentState.validate()) {}
+              },
+              child: Text('Tampil Data'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Table _widgetTableOperationalTime(
+      BuildContext context, FutsalFields _futsalField) {
+    return Table(
+      columnWidths: {
+        0: FractionColumnWidth(.3),
+        1: FractionColumnWidth(.1),
+        2: FractionColumnWidth(.2),
+        3: FractionColumnWidth(.4),
+      },
+      children: [
+        TableRow(
+          children: [
+            TableCell(
+              child: _widgetTextContentTable(context, 'Jam Buka'),
+            ),
+            TableCell(
+              child: _widgetTextContentTable(context, ':'),
+            ),
+            TableCell(
+              child:
+                  _widgetTextContentTable(context, _futsalField.openingHours),
+            ),
+            TableCell(
+              child: InkWell(
+                onTap: () {},
+                child: Icon(
+                  Icons.edit,
+                ),
+              ),
+            ),
+          ],
+        ),
+        TableRow(
+          children: [
+            TableCell(
+              child: _widgetTextContentTable(context, 'Jam Tutup'),
+            ),
+            TableCell(
+              child: _widgetTextContentTable(context, ':'),
+            ),
+            TableCell(
+              child:
+                  _widgetTextContentTable(context, _futsalField.closingHours),
+            ),
+            TableCell(
+              child: InkWell(
+                onTap: () {},
+                child: Icon(
+                  Icons.edit,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Text _widgetTextContentTable(BuildContext context, String content) {
+    return Text(
+      content,
+      style: TextStyle(
+        fontWeight: FontWeight.w300,
+        fontSize: MediaQuery.of(context).size.height / 100 * 1.8,
       ),
     );
   }
