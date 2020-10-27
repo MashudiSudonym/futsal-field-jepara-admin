@@ -36,6 +36,7 @@ class _FieldDetailInformationScreenState
   int _synthesisQuantity;
   int _synthesisDayPrice;
   int _synthesisNightPrice;
+  bool _visibilityStatusTableOfFieldSchedule = false;
 
   @override
   void initState() {
