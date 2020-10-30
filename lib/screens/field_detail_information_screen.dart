@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -36,7 +37,7 @@ class _FieldDetailInformationScreenState
   int _synthesisQuantity;
   int _synthesisDayPrice;
   int _synthesisNightPrice;
-  bool _visibilityStatusTableOfFieldSchedule = false;
+  bool visible = false;
 
   @override
   void initState() {
@@ -325,6 +326,43 @@ class _FieldDetailInformationScreenState
             SizedBox(
               height: MediaQuery.of(context).size.height / 100 * 2,
             ),
+            Visibility(
+              maintainSize: true,
+              maintainAnimation: true,
+              maintainState: true,
+              visible: visible,
+              child: Container(
+                padding: EdgeInsets.only(
+                  top: MediaQuery.of(context).size.height / 100 * 2,
+                  left: MediaQuery.of(context).size.height / 100 * 2,
+                  right: MediaQuery.of(context).size.height / 100 * 2,
+                ),
+                child: Center(
+                  child: Text('Tampilkan Jadwal Lapangan'),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height / 100 * 2,
+            ),
+            Container(
+              padding: EdgeInsets.only(
+                left: MediaQuery.of(context).size.height / 100 * 2,
+                right: MediaQuery.of(context).size.height / 100 * 2,
+              ),
+              width: double.infinity,
+              height: MediaQuery.of(context).size.height / 100 * 5,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.blueAccent,
+                ),
+                onPressed: () {},
+                child: Text('Atur Jadwal Lapangan'),
+              ),
+            ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height / 100 * 2,
+            ),
           ],
         ),
       ),
@@ -453,7 +491,11 @@ class _FieldDetailInformationScreenState
             height: MediaQuery.of(context).size.height / 100 * 5,
             child: ElevatedButton(
               onPressed: () {
-                if (_formKey.currentState.validate()) {}
+                if (_formKey.currentState.validate()) {
+                  setState(() {
+                    visible = true;
+                  });
+                }
               },
               child: Text('Tampil Data'),
             ),
