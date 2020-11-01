@@ -28,9 +28,6 @@ class _FieldDetailInformationScreenState
   TextEditingController _startTimePickerController = TextEditingController();
   String _startTimeValue = '';
   TimeOfDay _startTime = TimeOfDay.now();
-  TextEditingController _finishTimePickerController = TextEditingController();
-  String _finishTimeValue = '';
-  TimeOfDay _finishTime = TimeOfDay.now();
   int _flooringQuantity;
   int _flooringDayPrice;
   int _flooringNightPrice;
@@ -84,7 +81,7 @@ class _FieldDetailInformationScreenState
     var _datePicker = await showDatePicker(
       context: context,
       initialDate: _date,
-      firstDate: DateTime.now(),
+      firstDate: DateTime(1945),
       lastDate: DateTime(2222),
     );
 
@@ -118,31 +115,6 @@ class _FieldDetailInformationScreenState
         _startTimeValue = _startTime.format(context);
         _startTimePickerController =
             TextEditingController(text: _startTimeValue);
-      });
-    }
-  }
-
-  Future<void> _selectFinishTime(BuildContext context) async {
-    var _timePicker = await showTimePicker(
-      context: context,
-      initialTime: _finishTime,
-      helpText: 'Masukkan jam dan menit dahulu, setelah itu tekan ok',
-      builder: (context, child) {
-        return MediaQuery(
-          data: MediaQuery.of(context).copyWith(
-            alwaysUse24HourFormat: true,
-          ),
-          child: child,
-        );
-      },
-    );
-
-    if (_timePicker != null && _timePicker != _finishTime) {
-      setState(() {
-        _finishTime = _timePicker;
-        _finishTimeValue = _finishTime.format(context);
-        _finishTimePickerController =
-            TextEditingController(text: _finishTimeValue);
       });
     }
   }
@@ -235,7 +207,7 @@ class _FieldDetailInformationScreenState
                 right: MediaQuery.of(context).size.height / 100 * 2,
               ),
               child: Text(
-                _futsalField.name,
+                _futsalField.name.toUpperCase(),
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
                   fontSize: MediaQuery.of(context).size.height / 100 * 2.5,
@@ -327,24 +299,19 @@ class _FieldDetailInformationScreenState
               height: MediaQuery.of(context).size.height / 100 * 2,
             ),
             Visibility(
-              maintainSize: true,
               maintainAnimation: true,
               maintainState: true,
               visible: visible,
               child: Container(
                 padding: EdgeInsets.only(
-                  top: MediaQuery.of(context).size.height / 100 * 2,
+                  bottom: MediaQuery.of(context).size.height / 100 * 2,
                   left: MediaQuery.of(context).size.height / 100 * 2,
                   right: MediaQuery.of(context).size.height / 100 * 2,
                 ),
-                child: Center(
-                  child: Text('Tampilkan Jadwal Lapangan'),
-                ),
+                child: _widgetFieldScheduleTable(context),
               ),
             ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height / 100 * 2,
-            ),
+
             Container(
               padding: EdgeInsets.only(
                 left: MediaQuery.of(context).size.height / 100 * 2,
@@ -357,7 +324,7 @@ class _FieldDetailInformationScreenState
                   primary: Colors.blueAccent,
                 ),
                 onPressed: () {},
-                child: Text('Atur Jadwal Lapangan'),
+                child: Text('Masukkan Jadwal Lapangan'),
               ),
             ),
             SizedBox(
@@ -366,6 +333,21 @@ class _FieldDetailInformationScreenState
           ],
         ),
       ),
+    );
+  }
+
+  Column _widgetFieldScheduleTable(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Tanggal Pesan ${_datePickerController.text}',
+          style: TextStyle(
+            fontWeight: FontWeight.w300,
+            fontSize: MediaQuery.of(context).size.height / 100 * 1.8,
+          ),
+        ),
+      ],
     );
   }
 
@@ -449,42 +431,7 @@ class _FieldDetailInformationScreenState
             height: MediaQuery.of(context).size.height / 100 * 1.5,
           ),
           // select finish time schedule
-          TextFormField(
-            validator: (String value) {
-              if (value.isEmpty) {
-                return 'tentukan jam selesai pesan lapangan';
-              }
-              return null;
-            },
-            onTap: () {
-              setState(() {
-                _selectFinishTime(context);
-              });
-            },
-            controller: _finishTimePickerController,
-            readOnly: true,
-            decoration: InputDecoration(
-              hintText: '$_finishTimeValue',
-              labelText: 'Pilih Jam Selesai',
-              labelStyle: TextStyle(
-                fontSize: MediaQuery.of(context).size.width / 100 * 4,
-                color: Colors.blue,
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: Colors.black54,
-                ),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: Colors.black54,
-                ),
-              ),
-            ),
-          ),
-          SizedBox(
-            height: MediaQuery.of(context).size.height / 100 * 1.5,
-          ),
+
           // button submit
           Container(
             width: double.infinity,
