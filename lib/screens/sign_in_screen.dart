@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:futsal_field_jepara_admin/data/data.dart' as data;
 import 'package:futsal_field_jepara_admin/utils/router.gr.dart';
@@ -215,14 +216,28 @@ class _SignInScreenState extends State<SignInScreen> {
               verification = verificationId;
             };
 
-            await data.auth.verifyPhoneNumber(
-              phoneNumber: completePhoneNumber,
-              timeout: const Duration(seconds: 5),
-              verificationCompleted: verificationCompleted,
-              verificationFailed: verificationFailed,
-              codeSent: codeSent,
-              codeAutoRetrievalTimeout: codeAutoRetrievalTimeout,
-            );
+            if (!kIsWeb) {
+              await data.auth.verifyPhoneNumber(
+                phoneNumber: completePhoneNumber,
+                timeout: const Duration(seconds: 5),
+                verificationCompleted: verificationCompleted,
+                verificationFailed: verificationFailed,
+                codeSent: codeSent,
+                codeAutoRetrievalTimeout: codeAutoRetrievalTimeout,
+              );
+            } else {
+              await data.auth.signInWithPhoneNumber(
+                completePhoneNumber,
+                RecaptchaVerifier(
+                  onSuccess: () {
+                    ExtendedNavigator.root.pushAndRemoveUntil(
+                        Routes.homeScreen, (route) => false);
+                  },
+                  onError: (FirebaseAuthException error) => print(error),
+                  onExpired: () => print('reCAPTCHA Expired!'),
+                ),
+              );
+            }
           } else {
             setState(() {
               message = 'Please input phone number!!';
