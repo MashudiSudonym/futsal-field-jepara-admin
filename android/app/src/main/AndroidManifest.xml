@@ -11,6 +11,9 @@
         android:name="io.flutter.app.FlutterApplication"
         android:label="Futsal Field Jepara Admin"
         android:icon="@mipmap/ic_launcher">
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDctsaS78VPwPui0KmDojuVgDjAoCO0Phs" />
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
