@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -7,7 +9,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:futsal_field_jepara_admin/data/data.dart' as data;
 import 'package:futsal_field_jepara_admin/models/field_type.dart';
 import 'package:futsal_field_jepara_admin/models/futsal_field.dart';
-import 'package:lottie/lottie.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:lottie/lottie.dart' as lottie;
 import 'package:supercharged/supercharged.dart';
 
 class FieldDetailInformationScreen extends StatefulWidget {
@@ -21,6 +24,11 @@ class FieldDetailInformationScreen extends StatefulWidget {
 
 class _FieldDetailInformationScreenState
     extends State<FieldDetailInformationScreen> {
+  Completer<GoogleMapController> _controller = Completer();
+  static final CameraPosition _kInitialPositiion = const CameraPosition(
+    target: LatLng(-6.649179, 110.707172),
+    zoom: 18.0,
+  );
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController _datePickerController = TextEditingController();
   String _dateValue = '';
@@ -35,10 +43,16 @@ class _FieldDetailInformationScreenState
   int _synthesisDayPrice;
   int _synthesisNightPrice;
   bool visible = false;
+  double _latitude = -6.649179;
+  double _longitude = 110.707172;
+  Set<Marker> _markers = Set();
+  Marker _marker;
 
   @override
   void initState() {
     _loadFutsalFieldDetail();
+    _animateCameraToLocation();
+    _addMarker();
     super.initState();
   }
 
@@ -53,6 +67,11 @@ class _FieldDetailInformationScreenState
             data.loadFieldDetailInformation(_futsalField.fieldTypeFlooring);
         var _fieldSynthesis =
             data.loadFieldDetailInformation(_futsalField.fieldTypeSynthesis);
+
+        setState(() {
+          _latitude = _futsalField.location.latitude;
+          _longitude = _futsalField.location.longitude;
+        });
 
         _fieldFlooring.then((value) {
           var _fieldType = FieldType.fromMap(value.data());
@@ -119,6 +138,33 @@ class _FieldDetailInformationScreenState
     }
   }
 
+  Future<void> _animateCameraToLocation() async {
+    final controller = await _controller.future;
+
+    setState(() {
+      controller.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(
+            target: LatLng(_latitude, _longitude),
+            zoom: 15.0,
+          ),
+        ),
+      );
+    });
+  }
+
+  Future<void> _addMarker() async {
+    _marker = Marker(
+      flat: true,
+      position: LatLng(_latitude, _longitude),
+      markerId: MarkerId('name'),
+    );
+
+    setState(() {
+      _markers.add(_marker);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -131,7 +177,7 @@ class _FieldDetailInformationScreenState
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Center(
-              child: Lottie.asset(
+              child: lottie.Lottie.asset(
                 'assets/error.json',
                 height: MediaQuery.of(context).size.height / 100 * 25,
               ),
@@ -143,7 +189,7 @@ class _FieldDetailInformationScreenState
             return _widgetLayout(context, _futsalField);
           }
           return Center(
-            child: Lottie.asset(
+            child: lottie.Lottie.asset(
               'assets/loading.json',
               height: MediaQuery.of(context).size.height / 100 * 25,
             ),
@@ -246,16 +292,7 @@ class _FieldDetailInformationScreenState
             ),
             // Location
             _widgetTextTitle(context, 'Lokasi'),
-            Padding(
-              padding: EdgeInsets.only(
-                left: MediaQuery.of(context).size.height / 100 * 2,
-                right: MediaQuery.of(context).size.height / 100 * 2,
-              ),
-              child: Container(
-                height: MediaQuery.of(context).size.height / 100 * 25,
-                color: Colors.grey,
-              ),
-            ),
+            _widgetMapFieldLocation(context),
             _widgetEditButton('Ubah Lokasi'),
             SizedBox(
               height: MediaQuery.of(context).size.height / 100 * 2,
@@ -311,26 +348,35 @@ class _FieldDetailInformationScreenState
                 child: _widgetFieldScheduleTable(context),
               ),
             ),
-
-            Container(
-              padding: EdgeInsets.only(
-                left: MediaQuery.of(context).size.height / 100 * 2,
-                right: MediaQuery.of(context).size.height / 100 * 2,
-              ),
-              width: double.infinity,
-              height: MediaQuery.of(context).size.height / 100 * 5,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  primary: Colors.blueAccent,
-                ),
-                onPressed: () {},
-                child: Text('Masukkan Jadwal Lapangan'),
-              ),
-            ),
             SizedBox(
               height: MediaQuery.of(context).size.height / 100 * 2,
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Padding _widgetMapFieldLocation(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(
+        left: MediaQuery.of(context).size.height / 100 * 2,
+        right: MediaQuery.of(context).size.height / 100 * 2,
+      ),
+      child: Container(
+        height: MediaQuery.of(context).size.height / 100 * 25,
+        color: Colors.grey,
+        child: GoogleMap(
+          initialCameraPosition: _kInitialPositiion,
+          onMapCreated: (GoogleMapController controller) {
+            _controller.complete(controller);
+          },
+          zoomGesturesEnabled: true,
+          zoomControlsEnabled: false,
+          myLocationEnabled: false,
+          myLocationButtonEnabled: false,
+          compassEnabled: true,
+          markers: _markers,
         ),
       ),
     );
@@ -345,6 +391,43 @@ class _FieldDetailInformationScreenState
           style: TextStyle(
             fontWeight: FontWeight.w300,
             fontSize: MediaQuery.of(context).size.height / 100 * 1.8,
+          ),
+        ),
+        Text(
+          'Lapangan Dipesan untuk Jam : ${_startTimePickerController.text}',
+          style: TextStyle(
+            fontWeight: FontWeight.w300,
+            fontSize: MediaQuery.of(context).size.height / 100 * 1.8,
+          ),
+        ),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: DataTable(
+            dividerThickness: 1.0,
+            headingTextStyle: TextStyle(
+              color: Colors.black,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w500,
+              fontSize: MediaQuery.of(context).size.height / 100 * 1.8,
+            ),
+            columns: [
+              DataColumn(
+                label: Text('Lapangan Flooring'),
+              ),
+              DataColumn(
+                label: Text('Lapangan Sintetis'),
+              ),
+            ],
+            rows: [
+              DataRow(cells: [
+                DataCell(
+                  Text('Mashudi'),
+                ),
+                DataCell(
+                  Text('-'),
+                ),
+              ]),
+            ],
           ),
         ),
       ],
