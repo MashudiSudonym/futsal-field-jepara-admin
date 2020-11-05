@@ -17,14 +17,13 @@ class FieldDetailInformationScreen extends StatefulWidget {
   final String futsalFieldUID;
 
   const FieldDetailInformationScreen({@required this.futsalFieldUID});
+
   @override
-  _FieldDetailInformationScreenState createState() =>
-      _FieldDetailInformationScreenState();
+  _FieldDetailInformationScreenState createState() => _FieldDetailInformationScreenState();
 }
 
-class _FieldDetailInformationScreenState
-    extends State<FieldDetailInformationScreen> {
-  Completer<GoogleMapController> _controller = Completer();
+class _FieldDetailInformationScreenState extends State<FieldDetailInformationScreen> {
+  final Completer<GoogleMapController> _controller = Completer();
   static final CameraPosition _kInitialPositiion = const CameraPosition(
     target: LatLng(-6.649179, 110.707172),
     zoom: 18.0,
@@ -45,7 +44,7 @@ class _FieldDetailInformationScreenState
   bool visible = false;
   double _latitude = -6.649179;
   double _longitude = 110.707172;
-  Set<Marker> _markers = Set();
+  final Set<Marker> _markers = {};
   Marker _marker;
 
   @override
@@ -58,15 +57,11 @@ class _FieldDetailInformationScreenState
 
   Future<void> _loadFutsalFieldDetail() async {
     await 1.seconds.delay.then((value) {
-      data
-          .loadFutsalFieldDetailByFutsalFieldUID(widget.futsalFieldUID)
-          .then((snapshot) {
+      data.loadFutsalFieldDetailByFutsalFieldUID(widget.futsalFieldUID).then((snapshot) {
         var _futsalField = FutsalFields.fromMap(snapshot.data());
 
-        var _fieldFlooring =
-            data.loadFieldDetailInformation(_futsalField.fieldTypeFlooring);
-        var _fieldSynthesis =
-            data.loadFieldDetailInformation(_futsalField.fieldTypeSynthesis);
+        var _fieldFlooring = data.loadFieldDetailInformation(_futsalField.fieldTypeFlooring);
+        var _fieldSynthesis = data.loadFieldDetailInformation(_futsalField.fieldTypeSynthesis);
 
         setState(() {
           _latitude = _futsalField.location.latitude;
@@ -132,8 +127,7 @@ class _FieldDetailInformationScreenState
       setState(() {
         _startTime = _timePicker;
         _startTimeValue = _startTime.format(context);
-        _startTimePickerController =
-            TextEditingController(text: _startTimeValue);
+        _startTimePickerController = TextEditingController(text: _startTimeValue);
       });
     }
   }
@@ -172,8 +166,7 @@ class _FieldDetailInformationScreenState
         title: Text('Detail Informasi Lapangan'),
       ),
       body: FutureBuilder<DocumentSnapshot>(
-        future:
-            data.loadFutsalFieldDetailByFutsalFieldUID(widget.futsalFieldUID),
+        future: data.loadFutsalFieldDetailByFutsalFieldUID(widget.futsalFieldUID),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Center(
@@ -199,8 +192,7 @@ class _FieldDetailInformationScreenState
     );
   }
 
-  SingleChildScrollView _widgetLayout(
-      BuildContext context, FutsalFields _futsalField) {
+  SingleChildScrollView _widgetLayout(BuildContext context, FutsalFields _futsalField) {
     return SingleChildScrollView(
       child: Container(
         width: double.infinity,
@@ -535,8 +527,7 @@ class _FieldDetailInformationScreenState
     );
   }
 
-  Table _widgetTableOperationalTime(
-      BuildContext context, FutsalFields _futsalField) {
+  Table _widgetTableOperationalTime(BuildContext context, FutsalFields _futsalField) {
     return Table(
       columnWidths: {
         0: FractionColumnWidth(.3),
@@ -554,8 +545,7 @@ class _FieldDetailInformationScreenState
               child: _widgetTextContentTable(context, ':'),
             ),
             TableCell(
-              child:
-                  _widgetTextContentTable(context, _futsalField.openingHours),
+              child: _widgetTextContentTable(context, _futsalField.openingHours),
             ),
             TableCell(
               child: InkWell(
@@ -576,8 +566,7 @@ class _FieldDetailInformationScreenState
               child: _widgetTextContentTable(context, ':'),
             ),
             TableCell(
-              child:
-                  _widgetTextContentTable(context, _futsalField.closingHours),
+              child: _widgetTextContentTable(context, _futsalField.closingHours),
             ),
             TableCell(
               child: InkWell(
