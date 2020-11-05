@@ -40,7 +40,7 @@ dependencies:
   auto_route: ^0.6.7
   map_launcher: ^0.6.0
   cached_network_image: ^2.2.0+1
-  # flutter_money_formatter: ^0.8.3
+
   somedialog: ^1.0.1
   lottie: ^0.4.0+1
   supercharged: ^1.7.0
@@ -48,6 +48,9 @@ dependencies:
   email_validator: ^1.0.5
   hexcolor: ^1.0.4
   esc_pos_bluetooth: ^0.2.8
+  velocity_x: ^1.0.0
+  flutter_icons: ^1.1.0
+  google_fonts: ^1.1.1
 
 dev_dependencies:
   flutter_test:

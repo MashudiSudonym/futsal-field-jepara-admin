@@ -11,11 +11,13 @@ import 'package:futsal_field_jepara_admin/models/user_order.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:supercharged/supercharged.dart';
+import 'package:velocity_x/velocity_x.dart' hide IntExtension;
 
 class OrderDetailScreen extends StatefulWidget {
   final String uid;
 
   const OrderDetailScreen({@required this.uid});
+
   @override
   _OrderDetailScreenState createState() => _OrderDetailScreenState();
 }
@@ -179,9 +181,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
 
     const paper = PaperSize.mm80;
 
-    final res = await _printerManager
-        .printTicket(await ticketFormat(paper))
-        .then((value) {
+    final res = await _printerManager.printTicket(await ticketFormat(paper)).then((value) {
       ExtendedNavigator.root.pop();
     }).catchError((error) {
       print('Log : $error');
@@ -224,8 +224,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
     );
   }
 
-  SingleChildScrollView _widgetMainContent(
-      BuildContext context, UserOrder _userOrder) {
+  SingleChildScrollView _widgetMainContent(BuildContext context, UserOrder _userOrder) {
     return SingleChildScrollView(
       child: Container(
         width: MediaQuery.of(context).size.width,
@@ -355,8 +354,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                             _printTicket(_devices[index]);
                                           },
                                           title: Text(_devices[index].name),
-                                          leading:
-                                              FaIcon(FontAwesomeIcons.print),
+                                          leading: FaIcon(FontAwesomeIcons.print),
                                         ),
                                         Divider(),
                                       ],
@@ -407,32 +405,35 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                     desc: 'Anda yakin akan membatalkan pesanan ini.',
                     btnOkColor: Colors.red,
                     btnOkOnPress: () {
-                      data
-                          .updateOrderStatusByOrderUID(widget.uid, 2)
-                          .then((value) => {
-                                AwesomeDialog(
-                                  context: context,
-                                  dialogType: DialogType.SUCCES,
-                                  animType: AnimType.SCALE,
-                                  title: 'Pesanan Dibatalkan',
-                                  desc:
-                                      'Pesanan ini telah dibatalkan oleh admin.',
-                                  btnOkOnPress: () {
-                                    ExtendedNavigator.root.pop();
-                                  },
-                                )..show()
-                              })
-                          .catchError((error) {
-                        AwesomeDialog(
-                          context: context,
-                          dialogType: DialogType.WARNING,
-                          animType: AnimType.SCALE,
-                          title: 'Terjadi Masalah!',
-                          desc: 'Kami mengira koneksi internet anda terganggu.',
-                          btnOkOnPress: () {
-                            ExtendedNavigator.root.pop();
-                          },
-                        )..show();
+                      var close = context.showLoading(msg: 'updating data...');
+                      Future.delayed(4.seconds, close).then((value) {
+                        data.updateOrderStatusByOrderUID(widget.uid, 2).then((value) {
+                          data.deleteSchedule(
+                            '${_userOrder.userName}69${_userOrder.uid}${_userOrder.fieldType}${_userOrder.futsalFieldUID}',
+                            _userOrder.futsalFieldUID,
+                          );
+                          AwesomeDialog(
+                            context: context,
+                            dialogType: DialogType.SUCCES,
+                            animType: AnimType.SCALE,
+                            title: 'Pesanan Dibatalkan',
+                            desc: 'Pesanan ini telah dibatalkan oleh admin.',
+                            btnOkOnPress: () {
+                              ExtendedNavigator.root.pop();
+                            },
+                          )..show();
+                        }).catchError((error) {
+                          AwesomeDialog(
+                            context: context,
+                            dialogType: DialogType.WARNING,
+                            animType: AnimType.SCALE,
+                            title: 'Terjadi Masalah!',
+                            desc: 'Kami mengira koneksi internet anda terganggu.',
+                            btnOkOnPress: () {
+                              ExtendedNavigator.root.pop();
+                            },
+                          )..show();
+                        });
                       });
                     },
                   )..show();
@@ -459,33 +460,39 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                         title: 'Terima Pesanan ?',
                         desc: 'Anda yakin akan menerima pesanan ini.',
                         btnOkOnPress: () {
-                          data
-                              .updateOrderStatusByOrderUID(widget.uid, 1)
-                              .then((value) => {
-                                    AwesomeDialog(
-                                      context: context,
-                                      dialogType: DialogType.SUCCES,
-                                      animType: AnimType.SCALE,
-                                      title: 'Pesanan Diterima',
-                                      desc:
-                                          'Pesanan ini telah diterima oleh admin.',
-                                      btnOkOnPress: () {
-                                        ExtendedNavigator.root.pop();
-                                      },
-                                    )..show()
-                                  })
-                              .catchError((error) {
-                            AwesomeDialog(
-                              context: context,
-                              dialogType: DialogType.WARNING,
-                              animType: AnimType.SCALE,
-                              title: 'Terjadi Masalah!',
-                              desc:
-                                  'Kami mengira koneksi internet anda terganggu.',
-                              btnOkOnPress: () {
-                                ExtendedNavigator.root.pop();
-                              },
-                            )..show();
+                          var close = context.showLoading(msg: 'updating data...');
+                          Future.delayed(4.seconds, close).then((value) {
+                            data.updateOrderStatusByOrderUID(widget.uid, 1).then((value) {
+                              data.createSchedule(
+                                '${_userOrder.userName}69${_userOrder.uid}${_userOrder.fieldType}${_userOrder.futsalFieldUID}',
+                                _userOrder.futsalFieldUID,
+                                _userOrder.fieldType,
+                                _userOrder.userName,
+                                _userOrder.orderDate,
+                                _userOrder.orderTime,
+                              );
+                              AwesomeDialog(
+                                context: context,
+                                dialogType: DialogType.SUCCES,
+                                animType: AnimType.SCALE,
+                                title: 'Pesanan Diterima',
+                                desc: 'Pesanan ini telah diterima oleh admin.',
+                                btnOkOnPress: () {
+                                  ExtendedNavigator.root.pop();
+                                },
+                              )..show();
+                            }).catchError((error) {
+                              AwesomeDialog(
+                                context: context,
+                                dialogType: DialogType.WARNING,
+                                animType: AnimType.SCALE,
+                                title: 'Terjadi Masalah!',
+                                desc: 'Kami mengira koneksi internet anda terganggu.',
+                                btnOkOnPress: () {
+                                  ExtendedNavigator.root.pop();
+                                },
+                              )..show();
+                            });
                           });
                         },
                       )..show();
