@@ -7,6 +7,16 @@ final FirebaseAuth auth = FirebaseAuth.instance;
 final FirebaseStorage storage = FirebaseStorage.instance;
 
 // firestore section
+// update number of field synthesis
+Future<void> updateNumberOfFieldSynthesis(String futsalFieldUID, int numberOfField) {
+  return fireStore.collection('futsalFields/$futsalFieldUID/fieldType/').doc('synthesis').update({'numberOfField': numberOfField});
+}
+
+// update number of field flooring
+Future<void> updateNumberOfFieldFlooring(String futsalFieldUID, int numberOfField) {
+  return fireStore.collection('futsalFields/$futsalFieldUID/fieldType/').doc('flooring').update({'numberOfField': numberOfField});
+}
+
 // remove schedule
 Future<void> deleteSchedule(String scheduleUID, String futsalFieldUID) {
   return fireStore.collection('futsalFields/$futsalFieldUID/schedule').doc(scheduleUID).delete();
