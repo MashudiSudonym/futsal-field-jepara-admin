@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:auto_route/auto_route.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -12,6 +13,7 @@ import 'package:futsal_field_jepara_admin/models/futsal_field.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:lottie/lottie.dart' as lottie;
 import 'package:supercharged/supercharged.dart';
+import 'package:velocity_x/velocity_x.dart' hide IntExtension;
 
 class FieldDetailInformationScreen extends StatefulWidget {
   final String futsalFieldUID;
@@ -19,10 +21,12 @@ class FieldDetailInformationScreen extends StatefulWidget {
   const FieldDetailInformationScreen({@required this.futsalFieldUID});
 
   @override
-  _FieldDetailInformationScreenState createState() => _FieldDetailInformationScreenState();
+  _FieldDetailInformationScreenState createState() =>
+      _FieldDetailInformationScreenState();
 }
 
-class _FieldDetailInformationScreenState extends State<FieldDetailInformationScreen> {
+class _FieldDetailInformationScreenState
+    extends State<FieldDetailInformationScreen> {
   final Completer<GoogleMapController> _controller = Completer();
   static final CameraPosition _kInitialPositiion = const CameraPosition(
     target: LatLng(-6.649179, 110.707172),
@@ -57,11 +61,15 @@ class _FieldDetailInformationScreenState extends State<FieldDetailInformationScr
 
   Future<void> _loadFutsalFieldDetail() async {
     await 1.seconds.delay.then((value) {
-      data.loadFutsalFieldDetailByFutsalFieldUID(widget.futsalFieldUID).then((snapshot) {
+      data
+          .loadFutsalFieldDetailByFutsalFieldUID(widget.futsalFieldUID)
+          .then((snapshot) {
         var _futsalField = FutsalFields.fromMap(snapshot.data());
 
-        var _fieldFlooring = data.loadFieldDetailInformation(_futsalField.fieldTypeFlooring);
-        var _fieldSynthesis = data.loadFieldDetailInformation(_futsalField.fieldTypeSynthesis);
+        var _fieldFlooring =
+            data.loadFieldDetailInformation(_futsalField.fieldTypeFlooring);
+        var _fieldSynthesis =
+            data.loadFieldDetailInformation(_futsalField.fieldTypeSynthesis);
 
         setState(() {
           _latitude = _futsalField.location.latitude;
@@ -127,7 +135,8 @@ class _FieldDetailInformationScreenState extends State<FieldDetailInformationScr
       setState(() {
         _startTime = _timePicker;
         _startTimeValue = _startTime.format(context);
-        _startTimePickerController = TextEditingController(text: _startTimeValue);
+        _startTimePickerController =
+            TextEditingController(text: _startTimeValue);
       });
     }
   }
@@ -166,7 +175,8 @@ class _FieldDetailInformationScreenState extends State<FieldDetailInformationScr
         title: Text('Detail Informasi Lapangan'),
       ),
       body: FutureBuilder<DocumentSnapshot>(
-        future: data.loadFutsalFieldDetailByFutsalFieldUID(widget.futsalFieldUID),
+        future:
+            data.loadFutsalFieldDetailByFutsalFieldUID(widget.futsalFieldUID),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Center(
@@ -192,7 +202,8 @@ class _FieldDetailInformationScreenState extends State<FieldDetailInformationScr
     );
   }
 
-  SingleChildScrollView _widgetLayout(BuildContext context, FutsalFields _futsalField) {
+  SingleChildScrollView _widgetLayout(
+      BuildContext context, FutsalFields _futsalField) {
     return SingleChildScrollView(
       child: Container(
         width: double.infinity,
@@ -527,7 +538,8 @@ class _FieldDetailInformationScreenState extends State<FieldDetailInformationScr
     );
   }
 
-  Table _widgetTableOperationalTime(BuildContext context, FutsalFields _futsalField) {
+  Table _widgetTableOperationalTime(
+      BuildContext context, FutsalFields _futsalField) {
     return Table(
       columnWidths: {
         0: FractionColumnWidth(.3),
@@ -545,7 +557,8 @@ class _FieldDetailInformationScreenState extends State<FieldDetailInformationScr
               child: _widgetTextContentTable(context, ':'),
             ),
             TableCell(
-              child: _widgetTextContentTable(context, _futsalField.openingHours),
+              child:
+                  _widgetTextContentTable(context, _futsalField.openingHours),
             ),
             TableCell(
               child: InkWell(
@@ -566,7 +579,8 @@ class _FieldDetailInformationScreenState extends State<FieldDetailInformationScr
               child: _widgetTextContentTable(context, ':'),
             ),
             TableCell(
-              child: _widgetTextContentTable(context, _futsalField.closingHours),
+              child:
+                  _widgetTextContentTable(context, _futsalField.closingHours),
             ),
             TableCell(
               child: InkWell(
@@ -637,17 +651,73 @@ class _FieldDetailInformationScreenState extends State<FieldDetailInformationScr
                   child: Text('$_flooringQuantity'),
                 ),
                 showEditIcon: true,
-                onTap: () {},
+                onTap: () {
+                  var _numberOfFieldFlooring = TextEditingController();
+                  _numberOfFieldFlooring.text = _flooringQuantity.toString();
+
+                  return showDialog(
+                      context: context,
+                      builder: (context) {
+                        return Dialog(
+                          child: [
+                            'Jumlah lapangan yang tersedia : '.text.lg.make(),
+                            10.heightBox,
+                            VxTextField(
+                              value: _flooringQuantity.toString(),
+                              borderType: VxTextFieldBorderType.roundLine,
+                              keyboardType: TextInputType.number,
+                              fillColor: Vx.white,
+                              controller: _numberOfFieldFlooring,
+                            ),
+                            25.heightBox,
+                            [
+                              ElevatedButton(
+                                onPressed: () => ExtendedNavigator.root.pop(),
+                                child: 'Batal'.text.make(),
+                              ),
+                              10.widthBox,
+                              ElevatedButton(
+                                onPressed: () async {
+                                  var close = context.showLoading(
+                                      msg: 'update data...');
+                                  await Future.delayed(3.seconds, close).then(
+                                      (value) => ExtendedNavigator.root.pop());
+                                  await data
+                                      .updateNumberOfFieldFlooring(
+                                          widget.futsalFieldUID,
+                                          _numberOfFieldFlooring.text.toInt())
+                                      .then(
+                                          (value) => _loadFutsalFieldDetail());
+                                },
+                                child: 'Oke'.text.black.make(),
+                                style:
+                                    ElevatedButton.styleFrom(primary: Vx.white),
+                              ),
+                            ].hStack().box.alignCenterRight.make(),
+                          ]
+                              .vStack(crossAlignment: CrossAxisAlignment.start)
+                              .scrollVertical()
+                              .box
+                              .p16
+                              .height(context.percentHeight * 20)
+                              .make(),
+                        );
+                      });
+                },
               ),
               DataCell(
                 Text('Rp $_flooringDayPrice'),
                 showEditIcon: true,
-                onTap: () {},
+                onTap: () {
+                  // TODO: Create function to update day price
+                },
               ),
               DataCell(
                 Text('Rp $_flooringNightPrice'),
                 showEditIcon: true,
-                onTap: () {},
+                onTap: () {
+                  // TODO: Create function to update night price
+                },
               ),
             ],
           ),
