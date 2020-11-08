@@ -81,8 +81,7 @@ class _OrderScreenState extends State<OrderScreen> {
                       physics: BouncingScrollPhysics(),
                       itemCount: snapshot.data.docs.length,
                       itemBuilder: (context, index) {
-                        var _userOrder =
-                            UserOrder.fromMap(snapshot.data.docs[index].data());
+                        var _userOrder = UserOrder.fromMap(snapshot.data.docs[index].data());
 
                         return AnimationConfiguration.staggeredList(
                           position: index,
@@ -108,31 +107,22 @@ class _OrderScreenState extends State<OrderScreen> {
                                       _userOrder.userName,
                                       style: TextStyle(
                                         color: Colors.black,
-                                        fontSize:
-                                            MediaQuery.of(context).size.width /
-                                                100 *
-                                                5.5,
+                                        fontSize: MediaQuery.of(context).size.width / 100 * 5.5,
                                       ),
                                     ),
                                     subtitle: Padding(
                                       padding: EdgeInsets.all(
-                                        MediaQuery.of(context).size.width /
-                                            100 *
-                                            3,
+                                        MediaQuery.of(context).size.width / 100 * 3,
                                       ),
                                       child: Text(
                                         (_userOrder.orderStatus == 2)
                                             ? "Lapangan : ${_userOrder.futsalFieldName}\nTanggal Pesan : ${_userOrder.orderDate.replaceAll("-", "/")}\nJam Pesan : ${_userOrder.orderTime}\nJenis Lapangan : ${_userOrder.fieldType}\nHarga : Rp.${_userOrder.price}\nStatus Pesanan : Pesanan Dibatalkan"
                                             : (_userOrder.orderStatus != 0)
                                                 ? "Lapangan : ${_userOrder.futsalFieldName}\nTanggal Pesan : ${_userOrder.orderDate.replaceAll("-", "/")}\nJam Pesan : ${_userOrder.orderTime}\nJenis Lapangan : ${_userOrder.fieldType}\nHarga : Rp.${_userOrder.price}\nStatus Pesanan : Pesanan Diterima"
-                                                : "Lapangan : ${_userOrder.futsalFieldName}\nTanggal Pesan : ${_userOrder.orderDate.replaceAll("-", "/")}\nJam Pesan : ${_userOrder.orderTime}\nJenis Lapangan : ${_userOrder.fieldType}\nHarga : Rp.${_userOrder.price}\nStatus Pesanan : Menunggu",
+                                                : "Lapangan : ${_userOrder.futsalFieldName}\nTanggal Pesan : ${_userOrder.orderDate.replaceAll("-", "/")}\nJam Pesan : ${_userOrder.orderTime}\nJenis Lapangan : ${_userOrder.fieldType}\nHarga : Rp.${_userOrder.price}\nStatus Pesanan : Menunggu Konfirmasi",
                                         style: TextStyle(
                                           color: Colors.black,
-                                          fontSize: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              100 *
-                                              4,
+                                          fontSize: MediaQuery.of(context).size.width / 100 * 4,
                                         ),
                                       ),
                                     ),

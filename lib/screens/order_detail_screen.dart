@@ -147,7 +147,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
             ? 'Pesanan Dibatalkan'
             : (_userOrderData.orderStatus != 0)
                 ? 'Pesanan Diterima'
-                : 'Menunggu',
+                : 'Menunggu konfirmasi',
         styles: PosStyles(
           align: PosAlign.right,
         ),
@@ -298,7 +298,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                   ? 'Pesanan Dibatalkan'
                   : (_userOrder.orderStatus != 0)
                       ? 'Pesanan Diterima'
-                      : 'Menunggu',
+                      : 'Menunggu konfirmasi',
             ),
             Divider(),
             SizedBox(
