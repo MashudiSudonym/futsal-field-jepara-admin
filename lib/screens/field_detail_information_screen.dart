@@ -289,7 +289,13 @@ class _FieldDetailInformationScreenState
                 ),
               ),
             ),
-            _widgetEditButton('Ubah Informasi Dasar'),
+            Container(
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                onPressed: () {},
+                child: 'Ubah Informasi Dasar'.text.make(),
+              ),
+            ),
             SizedBox(
               height: MediaQuery.of(context).size.height / 100 * 2,
             ),
@@ -709,14 +715,114 @@ class _FieldDetailInformationScreenState
                 Text('Rp $_flooringDayPrice'),
                 showEditIcon: true,
                 onTap: () {
-                  // TODO: Create function to update day price
+                  var _dayPriceFlooring = TextEditingController();
+                  _dayPriceFlooring.text = _flooringDayPrice.toString();
+
+                  return showDialog(
+                      context: context,
+                      builder: (context) {
+                        return Dialog(
+                          child: [
+                            'Harga sewa lapangan (Pagi) : '.text.lg.make(),
+                            10.heightBox,
+                            VxTextField(
+                              value: _flooringDayPrice.toString(),
+                              borderType: VxTextFieldBorderType.roundLine,
+                              keyboardType: TextInputType.number,
+                              fillColor: Vx.white,
+                              controller: _dayPriceFlooring,
+                            ),
+                            25.heightBox,
+                            [
+                              ElevatedButton(
+                                onPressed: () => ExtendedNavigator.root.pop(),
+                                child: 'Batal'.text.make(),
+                              ),
+                              10.widthBox,
+                              ElevatedButton(
+                                onPressed: () async {
+                                  var close = context.showLoading(
+                                      msg: 'update data...');
+                                  await Future.delayed(3.seconds, close).then(
+                                      (value) => ExtendedNavigator.root.pop());
+                                  await data
+                                      .updateFlooringDayPrice(
+                                          widget.futsalFieldUID,
+                                          _dayPriceFlooring.text.toInt())
+                                      .then(
+                                          (value) => _loadFutsalFieldDetail());
+                                },
+                                child: 'Oke'.text.black.make(),
+                                style:
+                                    ElevatedButton.styleFrom(primary: Vx.white),
+                              ),
+                            ].hStack().box.alignCenterRight.make(),
+                          ]
+                              .vStack(crossAlignment: CrossAxisAlignment.start)
+                              .scrollVertical()
+                              .box
+                              .p16
+                              .height(context.percentHeight * 20)
+                              .make(),
+                        );
+                      });
                 },
               ),
               DataCell(
                 Text('Rp $_flooringNightPrice'),
                 showEditIcon: true,
                 onTap: () {
-                  // TODO: Create function to update night price
+                  var _nightPriceFlooring = TextEditingController();
+                  _nightPriceFlooring.text = _flooringNightPrice.toString();
+
+                  return showDialog(
+                      context: context,
+                      builder: (context) {
+                        return Dialog(
+                          child: [
+                            'Harga sewa lapangan (Malam) : '.text.lg.make(),
+                            10.heightBox,
+                            VxTextField(
+                              value: _flooringNightPrice.toString(),
+                              borderType: VxTextFieldBorderType.roundLine,
+                              keyboardType: TextInputType.number,
+                              fillColor: Vx.white,
+                              controller: _nightPriceFlooring,
+                            ),
+                            25.heightBox,
+                            [
+                              ElevatedButton(
+                                onPressed: () => ExtendedNavigator.root.pop(),
+                                child: 'Batal'.text.make(),
+                              ),
+                              10.widthBox,
+                              ElevatedButton(
+                                onPressed: () async {
+                                  var close = context.showLoading(
+                                      msg: 'update data...');
+                                  await Future.delayed(3.seconds, close).then(
+                                      (value) => ExtendedNavigator.root.pop());
+                                  await data
+                                      .updateFlooringNightPrice(
+                                          widget.futsalFieldUID,
+                                          _nightPriceFlooring.text.toInt())
+                                      .then(
+                                          (value) => _loadFutsalFieldDetail());
+                                },
+                                child: 'Oke'.text.black.make(),
+                                style:
+                                    ElevatedButton.styleFrom(primary: Vx.white),
+                              ),
+                            ].hStack().box.alignCenterRight.make(),
+                          ]
+                              .vStack(crossAlignment: CrossAxisAlignment.start)
+                              .scrollVertical()
+                              .box
+                              .p16
+                              .height(context.percentHeight * 20)
+                              .make(),
+                        );
+                      });
                 },
               ),
             ],
@@ -731,17 +837,173 @@ class _FieldDetailInformationScreenState
                   child: Text('$_synthesisQuantity'),
                 ),
                 showEditIcon: true,
-                onTap: () {},
+                onTap: () {
+                  var _numberOfFieldSynthesis = TextEditingController();
+                  _numberOfFieldSynthesis.text = _synthesisQuantity.toString();
+
+                  return showDialog(
+                      context: context,
+                      builder: (context) {
+                        return Dialog(
+                          child: [
+                            'Jumlah lapangan yang tersedia : '.text.lg.make(),
+                            10.heightBox,
+                            VxTextField(
+                              value: _synthesisQuantity.toString(),
+                              borderType: VxTextFieldBorderType.roundLine,
+                              keyboardType: TextInputType.number,
+                              fillColor: Vx.white,
+                              controller: _numberOfFieldSynthesis,
+                            ),
+                            25.heightBox,
+                            [
+                              ElevatedButton(
+                                onPressed: () => ExtendedNavigator.root.pop(),
+                                child: 'Batal'.text.make(),
+                              ),
+                              10.widthBox,
+                              ElevatedButton(
+                                onPressed: () async {
+                                  var close = context.showLoading(
+                                      msg: 'update data...');
+                                  await Future.delayed(3.seconds, close).then(
+                                      (value) => ExtendedNavigator.root.pop());
+                                  await data
+                                      .updateNumberOfFieldSynthesis(
+                                          widget.futsalFieldUID,
+                                          _numberOfFieldSynthesis.text.toInt())
+                                      .then(
+                                          (value) => _loadFutsalFieldDetail());
+                                },
+                                child: 'Oke'.text.black.make(),
+                                style:
+                                    ElevatedButton.styleFrom(primary: Vx.white),
+                              ),
+                            ].hStack().box.alignCenterRight.make(),
+                          ]
+                              .vStack(crossAlignment: CrossAxisAlignment.start)
+                              .scrollVertical()
+                              .box
+                              .p16
+                              .height(context.percentHeight * 20)
+                              .make(),
+                        );
+                      });
+                },
               ),
               DataCell(
                 Text('Rp $_synthesisDayPrice'),
                 showEditIcon: true,
-                onTap: () {},
+                onTap: () {
+                  var _dayPriceSynthesis = TextEditingController();
+                  _dayPriceSynthesis.text = _synthesisDayPrice.toString();
+
+                  return showDialog(
+                      context: context,
+                      builder: (context) {
+                        return Dialog(
+                          child: [
+                            'Harga sewa lapangan (Pagi) : '.text.lg.make(),
+                            10.heightBox,
+                            VxTextField(
+                              value: _synthesisDayPrice.toString(),
+                              borderType: VxTextFieldBorderType.roundLine,
+                              keyboardType: TextInputType.number,
+                              fillColor: Vx.white,
+                              controller: _dayPriceSynthesis,
+                            ),
+                            25.heightBox,
+                            [
+                              ElevatedButton(
+                                onPressed: () => ExtendedNavigator.root.pop(),
+                                child: 'Batal'.text.make(),
+                              ),
+                              10.widthBox,
+                              ElevatedButton(
+                                onPressed: () async {
+                                  var close = context.showLoading(
+                                      msg: 'update data...');
+                                  await Future.delayed(3.seconds, close).then(
+                                      (value) => ExtendedNavigator.root.pop());
+                                  await data
+                                      .updateSynthesisDayPrice(
+                                          widget.futsalFieldUID,
+                                          _dayPriceSynthesis.text.toInt())
+                                      .then(
+                                          (value) => _loadFutsalFieldDetail());
+                                },
+                                child: 'Oke'.text.black.make(),
+                                style:
+                                    ElevatedButton.styleFrom(primary: Vx.white),
+                              ),
+                            ].hStack().box.alignCenterRight.make(),
+                          ]
+                              .vStack(crossAlignment: CrossAxisAlignment.start)
+                              .scrollVertical()
+                              .box
+                              .p16
+                              .height(context.percentHeight * 20)
+                              .make(),
+                        );
+                      });
+                },
               ),
               DataCell(
                 Text('Rp $_synthesisNightPrice'),
                 showEditIcon: true,
-                onTap: () {},
+                onTap: () {
+                  var _nightPriceSynthesis = TextEditingController();
+                  _nightPriceSynthesis.text = _synthesisNightPrice.toString();
+
+                  return showDialog(
+                      context: context,
+                      builder: (context) {
+                        return Dialog(
+                          child: [
+                            'Harga sewa lapangan (Malam) : '.text.lg.make(),
+                            10.heightBox,
+                            VxTextField(
+                              value: _synthesisNightPrice.toString(),
+                              borderType: VxTextFieldBorderType.roundLine,
+                              keyboardType: TextInputType.number,
+                              fillColor: Vx.white,
+                              controller: _nightPriceSynthesis,
+                            ),
+                            25.heightBox,
+                            [
+                              ElevatedButton(
+                                onPressed: () => ExtendedNavigator.root.pop(),
+                                child: 'Batal'.text.make(),
+                              ),
+                              10.widthBox,
+                              ElevatedButton(
+                                onPressed: () async {
+                                  var close = context.showLoading(
+                                      msg: 'update data...');
+                                  await Future.delayed(3.seconds, close).then(
+                                      (value) => ExtendedNavigator.root.pop());
+                                  await data
+                                      .updateSynthesisNightPrice(
+                                          widget.futsalFieldUID,
+                                          _nightPriceSynthesis.text.toInt())
+                                      .then(
+                                          (value) => _loadFutsalFieldDetail());
+                                },
+                                child: 'Oke'.text.black.make(),
+                                style:
+                                    ElevatedButton.styleFrom(primary: Vx.white),
+                              ),
+                            ].hStack().box.alignCenterRight.make(),
+                          ]
+                              .vStack(crossAlignment: CrossAxisAlignment.start)
+                              .scrollVertical()
+                              .box
+                              .p16
+                              .height(context.percentHeight * 20)
+                              .make(),
+                        );
+                      });
+                },
               ),
             ],
           ),
