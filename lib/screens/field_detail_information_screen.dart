@@ -295,7 +295,87 @@ class _FieldDetailInformationScreenState
             Container(
               alignment: Alignment.centerRight,
               child: TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  var _nameController = TextEditingController();
+                  var _addressController = TextEditingController();
+                  var _phoneController = TextEditingController();
+
+                  _nameController.text = _futsalField.name;
+                  _addressController.text = _futsalField.address;
+                  _phoneController.text = _futsalField.phone;
+
+                  return showDialog(
+                      context: context,
+                      builder: (context) {
+                        return Dialog(
+                          child: [
+                            'Nama : '.text.lg.make(),
+                            10.heightBox,
+                            VxTextField(
+                              value: _futsalField.name,
+                              borderType: VxTextFieldBorderType.roundLine,
+                              keyboardType: TextInputType.name,
+                              fillColor: Vx.white,
+                              controller: _nameController,
+                            ),
+                            15.heightBox,
+                            'Alamat : '.text.lg.make(),
+                            10.heightBox,
+                            VxTextField(
+                              value: _futsalField.address,
+                              borderType: VxTextFieldBorderType.roundLine,
+                              keyboardType: TextInputType.streetAddress,
+                              fillColor: Vx.white,
+                              controller: _addressController,
+                            ),
+                            15.heightBox,
+                            'Nomor Telepon : '.text.lg.make(),
+                            10.heightBox,
+                            VxTextField(
+                              value: _futsalField.phone,
+                              borderType: VxTextFieldBorderType.roundLine,
+                              keyboardType: TextInputType.phone,
+                              fillColor: Vx.white,
+                              controller: _phoneController,
+                            ),
+                            25.heightBox,
+                            [
+                              ElevatedButton(
+                                onPressed: () => ExtendedNavigator.root.pop(),
+                                child: 'Batal'.text.make(),
+                              ),
+                              10.widthBox,
+                              ElevatedButton(
+                                onPressed: () async {
+                                  var close = context.showLoading(
+                                      msg: 'update data...');
+                                  await Future.delayed(3.seconds, close).then(
+                                      (value) => ExtendedNavigator.root.pop());
+                                  await data
+                                      .updateBasicInformation(
+                                        widget.futsalFieldUID,
+                                        _nameController.text,
+                                        _addressController.text,
+                                        _phoneController.text,
+                                      )
+                                      .then(
+                                          (value) => _loadFutsalFieldDetail());
+                                },
+                                child: 'Oke'.text.black.make(),
+                                style:
+                                    ElevatedButton.styleFrom(primary: Vx.white),
+                              ),
+                            ].hStack().box.alignCenterRight.make(),
+                          ]
+                              .vStack(crossAlignment: CrossAxisAlignment.start)
+                              .scrollVertical()
+                              .box
+                              .p16
+                              .height(context.percentHeight * 40)
+                              .make(),
+                        );
+                      });
+                },
                 child: 'Ubah Informasi Dasar'.text.make(),
               ),
             ),
