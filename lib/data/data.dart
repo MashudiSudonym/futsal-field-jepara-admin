@@ -7,6 +7,22 @@ final FirebaseAuth auth = FirebaseAuth.instance;
 final FirebaseStorage storage = FirebaseStorage.instance;
 
 // firestore section
+// update closing hour
+Future<void> updateClosingHour(String futsalFieldUID, String closingHour) {
+  return fireStore
+      .collection('futsalFields/')
+      .doc(futsalFieldUID)
+      .update({'closingHours': closingHour});
+}
+
+// update opening hour
+Future<void> updateOpeningHour(String futsalFieldUID, String openingHour) {
+  return fireStore
+      .collection('futsalFields/')
+      .doc(futsalFieldUID)
+      .update({'openingHours': openingHour});
+}
+
 // update synthesis night price
 Future<void> updateSynthesisNightPrice(String futsalFieldUID, int nightPrice) {
   return fireStore

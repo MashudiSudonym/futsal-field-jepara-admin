@@ -362,6 +362,7 @@ class _EditUserProfileScreenState extends State<EditUserProfileScreen> {
               } else if (eventType == StorageTaskEventType.success) {
                 try {
                   var downloadUrl = await event.snapshot.ref.getDownloadURL();
+                  // ignore: unused_local_variable
                   var userDataUpdate = await data.updateUserProfileByUserId(
                     _userUID,
                     _fullNameController.text,
@@ -385,6 +386,7 @@ class _EditUserProfileScreenState extends State<EditUserProfileScreen> {
             await streamSubscription.cancel();
           } else {
             try {
+              // ignore: unused_local_variable
               var userDataUpdate = await data.updateUserProfileByUserId(
                 _userUID,
                 _fullNameController.text,

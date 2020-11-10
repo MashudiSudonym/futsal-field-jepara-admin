@@ -33,6 +33,7 @@ class _FieldDetailInformationScreenState
     zoom: 18.0,
   );
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   TextEditingController _datePickerController = TextEditingController();
   String _dateValue = '';
   DateTime _date = DateTime.now();
@@ -50,6 +51,8 @@ class _FieldDetailInformationScreenState
   double _longitude = 110.707172;
   final Set<Marker> _markers = {};
   Marker _marker;
+  String _openHourTimeValue;
+  String _closeHourTimeValue;
 
   @override
   void initState() {
@@ -563,12 +566,41 @@ class _FieldDetailInformationScreenState
               child: _widgetTextContentTable(context, ':'),
             ),
             TableCell(
-              child:
-                  _widgetTextContentTable(context, _futsalField.openingHours),
+              child: _widgetTextContentTable(
+                  context,
+                  (_openHourTimeValue != null)
+                      ? _openHourTimeValue
+                      : _futsalField.openingHours),
             ),
             TableCell(
               child: InkWell(
-                onTap: () {},
+                onTap: () async {
+                  var _timeOfDay = TimeOfDay.now();
+
+                  var _timePicker = await showTimePicker(
+                    context: context,
+                    initialTime: _timeOfDay,
+                    helpText:
+                        'Masukkan jam dan menit dahulu, setelah itu tekan ok',
+                    builder: (context, child) {
+                      return MediaQuery(
+                        data: MediaQuery.of(context).copyWith(
+                          alwaysUse24HourFormat: true,
+                        ),
+                        child: child,
+                      );
+                    },
+                  );
+
+                  if (_timePicker != null && _timePicker != _timeOfDay) {
+                    setState(() {
+                      _timeOfDay = _timePicker;
+                      _openHourTimeValue = _timeOfDay.format(context);
+                    });
+                    await data.updateOpeningHour(
+                        widget.futsalFieldUID, _openHourTimeValue);
+                  }
+                },
                 child: Icon(
                   Icons.edit,
                 ),
@@ -585,12 +617,41 @@ class _FieldDetailInformationScreenState
               child: _widgetTextContentTable(context, ':'),
             ),
             TableCell(
-              child:
-                  _widgetTextContentTable(context, _futsalField.closingHours),
+              child: _widgetTextContentTable(
+                  context,
+                  (_closeHourTimeValue != null)
+                      ? _closeHourTimeValue
+                      : _futsalField.closingHours),
             ),
             TableCell(
               child: InkWell(
-                onTap: () {},
+                onTap: () async {
+                  var _timeOfDay = TimeOfDay.now();
+
+                  var _timePicker = await showTimePicker(
+                    context: context,
+                    initialTime: _timeOfDay,
+                    helpText:
+                        'Masukkan jam dan menit dahulu, setelah itu tekan ok',
+                    builder: (context, child) {
+                      return MediaQuery(
+                        data: MediaQuery.of(context).copyWith(
+                          alwaysUse24HourFormat: true,
+                        ),
+                        child: child,
+                      );
+                    },
+                  );
+
+                  if (_timePicker != null && _timePicker != _timeOfDay) {
+                    setState(() {
+                      _timeOfDay = _timePicker;
+                      _closeHourTimeValue = _timeOfDay.format(context);
+                    });
+                    await data.updateClosingHour(
+                        widget.futsalFieldUID, _closeHourTimeValue);
+                  }
+                },
                 child: Icon(
                   Icons.edit,
                 ),

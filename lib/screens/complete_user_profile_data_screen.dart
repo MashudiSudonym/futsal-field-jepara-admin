@@ -358,6 +358,7 @@ class _CompleteUserProfileDataScreenState
               } else if (eventType == StorageTaskEventType.success) {
                 try {
                   var downloadUrl = await event.snapshot.ref.getDownloadURL();
+                  // ignore: unused_local_variable
                   var userData = await data.uploadUserProfileByUserId(
                     _userUID,
                     _fullNameController.text,
