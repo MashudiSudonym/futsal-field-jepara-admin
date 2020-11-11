@@ -7,6 +7,15 @@ final FirebaseAuth auth = FirebaseAuth.instance;
 final FirebaseStorage storage = FirebaseStorage.instance;
 
 // firestore section
+// update location marker
+Future<void> updateLocationMarker(
+    String futsalFieldUID, double latitude, double longitude) {
+  return fireStore
+      .collection('futsalFields/')
+      .doc(futsalFieldUID)
+      .update({'location': GeoPoint(latitude, longitude)});
+}
+
 // update basic information
 Future<void> updateBasicInformation(String futsalFieldUID, String futsalName,
     String futsalAddress, String futsalPhone) {

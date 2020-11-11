@@ -13,6 +13,7 @@ import 'package:futsal_field_jepara_admin/models/futsal_field.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:lottie/lottie.dart' as lottie;
 import 'package:supercharged/supercharged.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:velocity_x/velocity_x.dart' hide IntExtension;
 
 class FieldDetailInformationScreen extends StatefulWidget {
@@ -385,7 +386,100 @@ class _FieldDetailInformationScreenState
             // Location
             _widgetTextTitle(context, 'Lokasi'),
             _widgetMapFieldLocation(context),
-            _widgetEditButton('Ubah Lokasi'),
+            Container(
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                onPressed: () {
+                  var _latitudeController = TextEditingController();
+                  var _longitudeController = TextEditingController();
+
+                  _latitudeController.text =
+                      _futsalField.location.latitude.toString();
+                  _longitudeController.text =
+                      _futsalField.location.longitude.toString();
+
+                  return showDialog(
+                      context: context,
+                      builder: (context) {
+                        return Dialog(
+                          child: [
+                            TextButton(
+                              onPressed: () async {
+                                const url = 'https://youtu.be/-ZsT77K8ijs';
+
+                                if (await canLaunch(url)) {
+                                  await launch(url);
+                                } else {
+                                  throw 'Error cannot launch $url';
+                                }
+                              },
+                              child:
+                                  'Tutorial cara mendapatkan nilai latitude dan longitude lokasi, klik disini!'
+                                      .text
+                                      .red500
+                                      .xl
+                                      .make(),
+                            ),
+                            15.heightBox,
+                            'Masukkan nilai latitude : '.text.lg.make(),
+                            10.heightBox,
+                            VxTextField(
+                              value: _futsalField.name,
+                              borderType: VxTextFieldBorderType.roundLine,
+                              keyboardType: TextInputType.name,
+                              fillColor: Vx.white,
+                              controller: _latitudeController,
+                            ),
+                            15.heightBox,
+                            'Masukkan nilai longitude : '.text.lg.make(),
+                            10.heightBox,
+                            VxTextField(
+                              value: _futsalField.address,
+                              borderType: VxTextFieldBorderType.roundLine,
+                              keyboardType: TextInputType.streetAddress,
+                              fillColor: Vx.white,
+                              controller: _longitudeController,
+                            ),
+                            35.heightBox,
+                            [
+                              ElevatedButton(
+                                onPressed: () => ExtendedNavigator.root.pop(),
+                                child: 'Batal'.text.make(),
+                              ),
+                              10.widthBox,
+                              ElevatedButton(
+                                onPressed: () async {
+                                  var close = context.showLoading(
+                                      msg: 'update data...');
+                                  await Future.delayed(3.seconds, close).then(
+                                      (value) => ExtendedNavigator.root.pop());
+                                  await data
+                                      .updateLocationMarker(
+                                        widget.futsalFieldUID,
+                                        _latitudeController.text.toDouble(),
+                                        _longitudeController.text.toDouble(),
+                                      )
+                                      .then(
+                                          (value) => _loadFutsalFieldDetail());
+                                },
+                                child: 'Oke'.text.black.make(),
+                                style:
+                                    ElevatedButton.styleFrom(primary: Vx.white),
+                              ),
+                            ].hStack().box.alignCenterRight.make(),
+                          ]
+                              .vStack(crossAlignment: CrossAxisAlignment.start)
+                              .scrollVertical()
+                              .box
+                              .p16
+                              .height(context.percentHeight * 45)
+                              .make(),
+                        );
+                      });
+                },
+                child: 'Ubah Lokasi'.text.make(),
+              ),
+            ),
             SizedBox(
               height: MediaQuery.of(context).size.height / 100 * 2,
             ),
