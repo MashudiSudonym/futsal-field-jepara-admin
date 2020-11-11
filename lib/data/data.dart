@@ -7,6 +7,24 @@ final FirebaseAuth auth = FirebaseAuth.instance;
 final FirebaseStorage storage = FirebaseStorage.instance;
 
 // firestore section
+// get schedule data
+Future<QuerySnapshot> getScheduleData(
+    String futsalFieldUID, String date, String time) {
+  return fireStore
+      .collection('futsalFields/$futsalFieldUID/schedule/')
+      .where('date', isEqualTo: date)
+      .where('startTime', isEqualTo: time)
+      .get();
+}
+
+// update image
+Future<void> updateImageFutsalField(String futsalFieldUID, String downloadURL) {
+  return fireStore
+      .collection('futsalFields/')
+      .doc(futsalFieldUID)
+      .update({'image': downloadURL});
+}
+
 // update location marker
 Future<void> updateLocationMarker(
     String futsalFieldUID, double latitude, double longitude) {

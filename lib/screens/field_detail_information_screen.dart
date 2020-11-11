@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -10,11 +12,18 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:futsal_field_jepara_admin/data/data.dart' as data;
 import 'package:futsal_field_jepara_admin/models/field_type.dart';
 import 'package:futsal_field_jepara_admin/models/futsal_field.dart';
+import 'package:futsal_field_jepara_admin/models/schedule.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart' as lottie;
 import 'package:supercharged/supercharged.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:velocity_x/velocity_x.dart' hide IntExtension;
+
+enum TypeOperation {
+  upload,
+  download,
+}
 
 class FieldDetailInformationScreen extends StatefulWidget {
   final String futsalFieldUID;
@@ -34,7 +43,7 @@ class _FieldDetailInformationScreenState
     zoom: 18.0,
   );
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   TextEditingController _datePickerController = TextEditingController();
   String _dateValue = '';
   DateTime _date = DateTime.now();
@@ -54,6 +63,13 @@ class _FieldDetailInformationScreenState
   Marker _marker;
   String _openHourTimeValue;
   String _closeHourTimeValue;
+  final ImagePicker _picker = ImagePicker();
+  var isLoading = true;
+  var isSuccess = true;
+  var image;
+  var typeOperation = TypeOperation.download;
+  String userOrderFlooring;
+  String userOrderSynthesis;
 
   @override
   void initState() {
@@ -61,6 +77,16 @@ class _FieldDetailInformationScreenState
     _animateCameraToLocation();
     _addMarker();
     super.initState();
+  }
+
+  void _widgetSnackBar(String content) {
+    _scaffoldKey.currentState.showSnackBar(
+      SnackBar(
+        content: Text(
+          content,
+        ),
+      ),
+    );
   }
 
   Future<void> _loadFutsalFieldDetail() async {
@@ -140,7 +166,7 @@ class _FieldDetailInformationScreenState
         _startTime = _timePicker;
         _startTimeValue = _startTime.format(context);
         _startTimePickerController =
-            TextEditingController(text: _startTimeValue);
+            TextEditingController(text: _startTimeValue.replaceAll(':', '.'));
       });
     }
   }
@@ -172,6 +198,78 @@ class _FieldDetailInformationScreenState
     });
   }
 
+  Future<void> _getImageFromCamera() async {
+    try {
+      var _pickedFile = await _picker.getImage(source: ImageSource.camera);
+
+      setState(() async {
+        image = File(_pickedFile.path);
+
+        await _uploadImageProcess();
+      });
+    } catch (err) {
+      print(err);
+    }
+  }
+
+  Future _uploadImageProcess() async {
+    if (image != null) {
+      // send data to firebase
+      var uploadTask = data
+          .storageReference()
+          .child('futsal/futsal-${widget.futsalFieldUID}')
+          .child('futsal/futsal-${widget.futsalFieldUID}')
+          .putFile(image);
+      var streamSubscription = uploadTask.events.listen((event) async {
+        var eventType = event.type;
+        if (eventType == StorageTaskEventType.progress) {
+          setState(() {
+            typeOperation = TypeOperation.upload;
+            isLoading = true;
+          });
+        } else if (eventType == StorageTaskEventType.failure) {
+          _widgetSnackBar('Foto gagal diunggah');
+          setState(() {
+            isLoading = false;
+            isSuccess = false;
+            typeOperation = null;
+          });
+        } else if (eventType == StorageTaskEventType.success) {
+          try {
+            var downloadUrl = await event.snapshot.ref.getDownloadURL();
+            // ignore: unused_local_variable
+            var userDataUpdate = await data.updateImageFutsalField(
+                widget.futsalFieldUID, downloadUrl.toString());
+            await ExtendedNavigator.root.pop();
+            setState(() {
+              isLoading = false;
+              isSuccess = true;
+              typeOperation = null;
+            });
+          } catch (e) {
+            print(e);
+          }
+        }
+      });
+      await uploadTask.onComplete;
+      await streamSubscription.cancel();
+    }
+  }
+
+  Future<void> _getImageFromGallery() async {
+    try {
+      var _pickedFile = await _picker.getImage(source: ImageSource.gallery);
+
+      setState(() async {
+        image = File(_pickedFile.path);
+
+        await _uploadImageProcess();
+      });
+    } catch (err) {
+      print(err);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -193,7 +291,24 @@ class _FieldDetailInformationScreenState
           if (snapshot.connectionState == ConnectionState.done) {
             var _futsalField = FutsalFields.fromMap(snapshot.data.data());
 
-            return _widgetLayout(context, _futsalField);
+            return Stack(
+              children: [
+                (isLoading && typeOperation == TypeOperation.upload)
+                    ? Container(
+                        width: double.infinity,
+                        height: double.infinity,
+                        color: Colors.blueGrey.withOpacity(0.5),
+                        child: Center(
+                          child: lottie.Lottie.asset(
+                            'assets/loading.json',
+                            height:
+                                MediaQuery.of(context).size.height / 100 * 25,
+                          ),
+                        ),
+                      )
+                    : _widgetLayout(context, _futsalField)
+              ],
+            );
           }
           return Center(
             child: lottie.Lottie.asset(
@@ -233,7 +348,9 @@ class _FieldDetailInformationScreenState
             ),
             Container(
               child: RaisedButton.icon(
-                onPressed: () {},
+                onPressed: () {
+                  _widgetDialogImageSource(context);
+                },
                 icon: FaIcon(
                   FontAwesomeIcons.photoVideo,
                   color: Colors.white,
@@ -296,86 +413,9 @@ class _FieldDetailInformationScreenState
             Container(
               alignment: Alignment.centerRight,
               child: TextButton(
-                onPressed: () {
-                  var _nameController = TextEditingController();
-                  var _addressController = TextEditingController();
-                  var _phoneController = TextEditingController();
-
-                  _nameController.text = _futsalField.name;
-                  _addressController.text = _futsalField.address;
-                  _phoneController.text = _futsalField.phone;
-
-                  return showDialog(
-                      context: context,
-                      builder: (context) {
-                        return Dialog(
-                          child: [
-                            'Nama : '.text.lg.make(),
-                            10.heightBox,
-                            VxTextField(
-                              value: _futsalField.name,
-                              borderType: VxTextFieldBorderType.roundLine,
-                              keyboardType: TextInputType.name,
-                              fillColor: Vx.white,
-                              controller: _nameController,
-                            ),
-                            15.heightBox,
-                            'Alamat : '.text.lg.make(),
-                            10.heightBox,
-                            VxTextField(
-                              value: _futsalField.address,
-                              borderType: VxTextFieldBorderType.roundLine,
-                              keyboardType: TextInputType.streetAddress,
-                              fillColor: Vx.white,
-                              controller: _addressController,
-                            ),
-                            15.heightBox,
-                            'Nomor Telepon : '.text.lg.make(),
-                            10.heightBox,
-                            VxTextField(
-                              value: _futsalField.phone,
-                              borderType: VxTextFieldBorderType.roundLine,
-                              keyboardType: TextInputType.phone,
-                              fillColor: Vx.white,
-                              controller: _phoneController,
-                            ),
-                            25.heightBox,
-                            [
-                              ElevatedButton(
-                                onPressed: () => ExtendedNavigator.root.pop(),
-                                child: 'Batal'.text.make(),
-                              ),
-                              10.widthBox,
-                              ElevatedButton(
-                                onPressed: () async {
-                                  var close = context.showLoading(
-                                      msg: 'update data...');
-                                  await Future.delayed(3.seconds, close).then(
-                                      (value) => ExtendedNavigator.root.pop());
-                                  await data
-                                      .updateBasicInformation(
-                                        widget.futsalFieldUID,
-                                        _nameController.text,
-                                        _addressController.text,
-                                        _phoneController.text,
-                                      )
-                                      .then(
-                                          (value) => _loadFutsalFieldDetail());
-                                },
-                                child: 'Oke'.text.black.make(),
-                                style:
-                                    ElevatedButton.styleFrom(primary: Vx.white),
-                              ),
-                            ].hStack().box.alignCenterRight.make(),
-                          ]
-                              .vStack(crossAlignment: CrossAxisAlignment.start)
-                              .scrollVertical()
-                              .box
-                              .p16
-                              .height(context.percentHeight * 40)
-                              .make(),
-                        );
-                      });
+                onPressed: () async {
+                  return await _updateBasicFutsalInformation(
+                      _futsalField, context);
                 },
                 child: 'Ubah Informasi Dasar'.text.make(),
               ),
@@ -389,93 +429,8 @@ class _FieldDetailInformationScreenState
             Container(
               alignment: Alignment.centerRight,
               child: TextButton(
-                onPressed: () {
-                  var _latitudeController = TextEditingController();
-                  var _longitudeController = TextEditingController();
-
-                  _latitudeController.text =
-                      _futsalField.location.latitude.toString();
-                  _longitudeController.text =
-                      _futsalField.location.longitude.toString();
-
-                  return showDialog(
-                      context: context,
-                      builder: (context) {
-                        return Dialog(
-                          child: [
-                            TextButton(
-                              onPressed: () async {
-                                const url = 'https://youtu.be/-ZsT77K8ijs';
-
-                                if (await canLaunch(url)) {
-                                  await launch(url);
-                                } else {
-                                  throw 'Error cannot launch $url';
-                                }
-                              },
-                              child:
-                                  'Tutorial cara mendapatkan nilai latitude dan longitude lokasi, klik disini!'
-                                      .text
-                                      .red500
-                                      .xl
-                                      .make(),
-                            ),
-                            15.heightBox,
-                            'Masukkan nilai latitude : '.text.lg.make(),
-                            10.heightBox,
-                            VxTextField(
-                              value: _futsalField.name,
-                              borderType: VxTextFieldBorderType.roundLine,
-                              keyboardType: TextInputType.name,
-                              fillColor: Vx.white,
-                              controller: _latitudeController,
-                            ),
-                            15.heightBox,
-                            'Masukkan nilai longitude : '.text.lg.make(),
-                            10.heightBox,
-                            VxTextField(
-                              value: _futsalField.address,
-                              borderType: VxTextFieldBorderType.roundLine,
-                              keyboardType: TextInputType.streetAddress,
-                              fillColor: Vx.white,
-                              controller: _longitudeController,
-                            ),
-                            35.heightBox,
-                            [
-                              ElevatedButton(
-                                onPressed: () => ExtendedNavigator.root.pop(),
-                                child: 'Batal'.text.make(),
-                              ),
-                              10.widthBox,
-                              ElevatedButton(
-                                onPressed: () async {
-                                  var close = context.showLoading(
-                                      msg: 'update data...');
-                                  await Future.delayed(3.seconds, close).then(
-                                      (value) => ExtendedNavigator.root.pop());
-                                  await data
-                                      .updateLocationMarker(
-                                        widget.futsalFieldUID,
-                                        _latitudeController.text.toDouble(),
-                                        _longitudeController.text.toDouble(),
-                                      )
-                                      .then(
-                                          (value) => _loadFutsalFieldDetail());
-                                },
-                                child: 'Oke'.text.black.make(),
-                                style:
-                                    ElevatedButton.styleFrom(primary: Vx.white),
-                              ),
-                            ].hStack().box.alignCenterRight.make(),
-                          ]
-                              .vStack(crossAlignment: CrossAxisAlignment.start)
-                              .scrollVertical()
-                              .box
-                              .p16
-                              .height(context.percentHeight * 45)
-                              .make(),
-                        );
-                      });
+                onPressed: () async {
+                  return await _updateLocation(_futsalField, context);
                 },
                 child: 'Ubah Lokasi'.text.make(),
               ),
@@ -543,6 +498,223 @@ class _FieldDetailInformationScreenState
     );
   }
 
+  Future _widgetDialogImageSource(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Ambil Gambar ?'),
+          content: Container(
+            child: Text('Pilih gambar dari galeri atau kamera.'),
+          ),
+          actions: [
+            Container(
+              margin: EdgeInsets.symmetric(
+                vertical: MediaQuery.of(context).size.width / 100 * 3,
+              ),
+              child: TextButton(
+                onPressed: () {
+                  _getImageFromCamera();
+                  ExtendedNavigator.root.pop();
+                },
+                child: Text(
+                  'Kamera',
+                  style: TextStyle(
+                    fontSize: MediaQuery.of(context).size.width / 100 * 5,
+                    color: Colors.deepOrange,
+                  ),
+                ),
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.symmetric(
+                vertical: MediaQuery.of(context).size.width / 100 * 3,
+              ),
+              child: TextButton(
+                onPressed: () {
+                  _getImageFromGallery();
+                  ExtendedNavigator.root.pop();
+                },
+                child: Text(
+                  'Galeri',
+                  style: TextStyle(
+                    fontSize: MediaQuery.of(context).size.width / 100 * 5,
+                    color: Colors.deepOrange,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<Future> _updateBasicFutsalInformation(
+      FutsalFields _futsalField, BuildContext context) async {
+    var _nameController = TextEditingController();
+    var _addressController = TextEditingController();
+    var _phoneController = TextEditingController();
+
+    _nameController.text = _futsalField.name;
+    _addressController.text = _futsalField.address;
+    _phoneController.text = _futsalField.phone;
+
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return Dialog(
+            child: [
+              'Nama : '.text.lg.make(),
+              10.heightBox,
+              VxTextField(
+                value: _futsalField.name,
+                borderType: VxTextFieldBorderType.roundLine,
+                keyboardType: TextInputType.name,
+                fillColor: Vx.white,
+                controller: _nameController,
+              ),
+              15.heightBox,
+              'Alamat : '.text.lg.make(),
+              10.heightBox,
+              VxTextField(
+                value: _futsalField.address,
+                borderType: VxTextFieldBorderType.roundLine,
+                keyboardType: TextInputType.streetAddress,
+                fillColor: Vx.white,
+                controller: _addressController,
+              ),
+              15.heightBox,
+              'Nomor Telepon : '.text.lg.make(),
+              10.heightBox,
+              VxTextField(
+                value: _futsalField.phone,
+                borderType: VxTextFieldBorderType.roundLine,
+                keyboardType: TextInputType.phone,
+                fillColor: Vx.white,
+                controller: _phoneController,
+              ),
+              25.heightBox,
+              [
+                ElevatedButton(
+                  onPressed: () => ExtendedNavigator.root.pop(),
+                  child: 'Batal'.text.make(),
+                ),
+                10.widthBox,
+                ElevatedButton(
+                  onPressed: () async {
+                    var close = context.showLoading(msg: 'update data...');
+                    await Future.delayed(3.seconds, close)
+                        .then((value) => ExtendedNavigator.root.pop());
+                    await data
+                        .updateBasicInformation(
+                          widget.futsalFieldUID,
+                          _nameController.text,
+                          _addressController.text,
+                          _phoneController.text,
+                        )
+                        .then((value) => _loadFutsalFieldDetail());
+                  },
+                  child: 'Oke'.text.black.make(),
+                  style: ElevatedButton.styleFrom(primary: Vx.white),
+                ),
+              ].hStack().box.alignCenterRight.make(),
+            ]
+                .vStack(crossAlignment: CrossAxisAlignment.start)
+                .scrollVertical()
+                .box
+                .p16
+                .height(context.percentHeight * 40)
+                .make(),
+          );
+        });
+  }
+
+  Future<Future> _updateLocation(
+      FutsalFields _futsalField, BuildContext context) async {
+    var _latitudeController = TextEditingController();
+    var _longitudeController = TextEditingController();
+
+    _latitudeController.text = _futsalField.location.latitude.toString();
+    _longitudeController.text = _futsalField.location.longitude.toString();
+
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return Dialog(
+            child: [
+              TextButton(
+                onPressed: () async {
+                  const url = 'https://youtu.be/-ZsT77K8ijs';
+
+                  if (await canLaunch(url)) {
+                    await launch(url);
+                  } else {
+                    throw 'Error cannot launch $url';
+                  }
+                },
+                child:
+                    'Tutorial cara mendapatkan nilai latitude dan longitude lokasi, klik disini!'
+                        .text
+                        .red500
+                        .xl
+                        .make(),
+              ),
+              15.heightBox,
+              'Masukkan nilai latitude : '.text.lg.make(),
+              10.heightBox,
+              VxTextField(
+                value: _futsalField.name,
+                borderType: VxTextFieldBorderType.roundLine,
+                keyboardType: TextInputType.name,
+                fillColor: Vx.white,
+                controller: _latitudeController,
+              ),
+              15.heightBox,
+              'Masukkan nilai longitude : '.text.lg.make(),
+              10.heightBox,
+              VxTextField(
+                value: _futsalField.address,
+                borderType: VxTextFieldBorderType.roundLine,
+                keyboardType: TextInputType.streetAddress,
+                fillColor: Vx.white,
+                controller: _longitudeController,
+              ),
+              35.heightBox,
+              [
+                ElevatedButton(
+                  onPressed: () => ExtendedNavigator.root.pop(),
+                  child: 'Batal'.text.make(),
+                ),
+                10.widthBox,
+                ElevatedButton(
+                  onPressed: () async {
+                    var close = context.showLoading(msg: 'update data...');
+                    await Future.delayed(3.seconds, close)
+                        .then((value) => ExtendedNavigator.root.pop());
+                    await data
+                        .updateLocationMarker(
+                          widget.futsalFieldUID,
+                          _latitudeController.text.toDouble(),
+                          _longitudeController.text.toDouble(),
+                        )
+                        .then((value) => _loadFutsalFieldDetail());
+                  },
+                  child: 'Oke'.text.black.make(),
+                  style: ElevatedButton.styleFrom(primary: Vx.white),
+                ),
+              ].hStack().box.alignCenterRight.make(),
+            ]
+                .vStack(crossAlignment: CrossAxisAlignment.start)
+                .scrollVertical()
+                .box
+                .p16
+                .height(context.percentHeight * 45)
+                .make(),
+          );
+        });
+  }
+
   Padding _widgetMapFieldLocation(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(
@@ -607,10 +779,14 @@ class _FieldDetailInformationScreenState
             rows: [
               DataRow(cells: [
                 DataCell(
-                  Text('Mashudi'),
+                  (userOrderFlooring != null)
+                      ? Text(userOrderFlooring).centered()
+                      : Text('-').centered(),
                 ),
                 DataCell(
-                  Text('-'),
+                  (userOrderSynthesis != null)
+                      ? Text(userOrderSynthesis).centered()
+                      : Text('-').centered(),
                 ),
               ]),
             ],
@@ -707,7 +883,35 @@ class _FieldDetailInformationScreenState
             height: MediaQuery.of(context).size.height / 100 * 5,
             child: ElevatedButton(
               onPressed: () {
+                userOrderFlooring = null;
+                userOrderSynthesis = null;
                 if (_formKey.currentState.validate()) {
+                  data
+                      .getScheduleData(
+                          widget.futsalFieldUID,
+                          _datePickerController.text,
+                          _startTimePickerController.text)
+                      .then((value) {
+                    print('LOG : ${value.docs}');
+                    value.docs.forEach((element) {
+                      var schedule = Schedule.fromMap(element.data());
+
+                      switch (schedule.fieldType) {
+                        case 'Lapangan Flooring':
+                          userOrderFlooring = schedule.bookBy;
+                          print(
+                              'LOG:    ${schedule.bookBy} $userOrderFlooring');
+                          break;
+                        case 'Lapangan Synthesis':
+                          userOrderSynthesis = schedule.bookBy;
+                          print(
+                              'LOG:    ${schedule.bookBy} $userOrderSynthesis');
+                          break;
+                        default:
+                          print('nope');
+                      }
+                    });
+                  });
                   setState(() {
                     visible = true;
                   });
@@ -1243,16 +1447,6 @@ class _FieldDetailInformationScreenState
             ],
           ),
         ],
-      ),
-    );
-  }
-
-  Container _widgetEditButton(String buttonText) {
-    return Container(
-      alignment: Alignment.centerRight,
-      child: TextButton(
-        onPressed: () {},
-        child: Text(buttonText),
       ),
     );
   }
