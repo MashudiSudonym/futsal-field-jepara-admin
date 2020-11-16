@@ -79,6 +79,13 @@ class _FieldDetailInformationScreenState
     super.initState();
   }
 
+  @override
+  void dispose() {
+    _datePickerController.dispose();
+    _startTimePickerController.dispose();
+    super.dispose();
+  }
+
   void _widgetSnackBar(String content) {
     _scaffoldKey.currentState.showSnackBar(
       SnackBar(
