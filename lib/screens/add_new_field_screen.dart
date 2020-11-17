@@ -19,11 +19,47 @@ class _AddNewFieldScreenState extends State<AddNewFieldScreen> {
   final TextEditingController _futsalCloseHourController =
       TextEditingController();
   final TextEditingController _futsalNumberOfFieldController =
-      TextEditingController();
+      TextEditingController(text: '0');
+  final TextEditingController _futsalNumberOfFieldFlooringController =
+      TextEditingController(text: '0');
+  final TextEditingController _futsalNumberOfFieldSynthesisController =
+      TextEditingController(text: '0');
+  final TextEditingController _futsalPriceDayFlooringController =
+      TextEditingController(text: '0');
+  final TextEditingController _futsalPriceNightFlooringController =
+      TextEditingController(text: '0');
+  final TextEditingController _futsalPriceDaySynthesisController =
+      TextEditingController(text: '0');
+  final TextEditingController _futsalPriceNightSynthesisController =
+      TextEditingController(text: '0');
   final TextEditingController _futsalLatitudeController =
       TextEditingController();
   final TextEditingController _futsalLongitudeController =
       TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _futsalNameController.dispose();
+    _futsalAddressController.dispose();
+    _futsalCloseHourController.dispose();
+    _futsalLatitudeController.dispose();
+    _futsalLongitudeController.dispose();
+    _futsalNumberOfFieldController.dispose();
+    _futsalNumberOfFieldFlooringController.dispose();
+    _futsalNumberOfFieldSynthesisController.dispose();
+    _futsalPriceDayFlooringController.dispose();
+    _futsalPriceDaySynthesisController.dispose();
+    _futsalPriceNightFlooringController.dispose();
+    _futsalPriceNightSynthesisController.dispose();
+    _futsalOpenHourController.dispose();
+    _futsalPhoneController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +74,7 @@ class _AddNewFieldScreenState extends State<AddNewFieldScreen> {
         body: VStack([
           // widget image upload
           _widgetImageUpload(),
+          20.heightBox,
           // widget form field data
           Form(
             key: _formKey,
@@ -45,6 +82,7 @@ class _AddNewFieldScreenState extends State<AddNewFieldScreen> {
               'Informasi Dasar'.text.xl3.make(),
               // widget name form field
               TextFormField(
+                controller: _futsalNameController,
                 keyboardType: TextInputType.text,
                 textCapitalization: TextCapitalization.words,
                 style: TextStyle(
@@ -67,16 +105,93 @@ class _AddNewFieldScreenState extends State<AddNewFieldScreen> {
                   return null;
                 },
               ),
+              // widget address form field
+              TextFormField(
+                controller: _futsalAddressController,
+                keyboardType: TextInputType.text,
+                textCapitalization: TextCapitalization.words,
+                style: TextStyle(
+                  fontSize: MediaQuery.of(context).size.width / 100 * 5,
+                  color: Colors.black87,
+                ),
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  labelText: 'Alamat Stadion Futsal',
+                  hintText: 'Alamat Stadion Futsal',
+                  hintStyle: TextStyle(
+                    fontSize: MediaQuery.of(context).size.width / 100 * 5,
+                    color: Colors.black38,
+                  ),
+                ),
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Anda belum mengisi alamat stadion futsal.';
+                  }
+                  return null;
+                },
+              ),
+              // widget phone form field
+              TextFormField(
+                controller: _futsalPhoneController,
+                keyboardType: TextInputType.phone,
+                style: TextStyle(
+                  fontSize: MediaQuery.of(context).size.width / 100 * 5,
+                  color: Colors.black87,
+                ),
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  labelText: 'Nomor Telepon Stadion Futsal',
+                  hintText: 'Nomor Telepon Stadion Futsal',
+                  hintStyle: TextStyle(
+                    fontSize: MediaQuery.of(context).size.width / 100 * 5,
+                    color: Colors.black38,
+                  ),
+                ),
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Anda belum mengisi nomor telepon stadion futsal.';
+                  }
+                  return null;
+                },
+              ),
+              // widget the number of fields form field
+              TextFormField(
+                controller: _futsalNumberOfFieldController,
+                keyboardType: TextInputType.number,
+                style: TextStyle(
+                  fontSize: MediaQuery.of(context).size.width / 100 * 5,
+                  color: Colors.black87,
+                ),
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  labelText: 'Jumlah Total Lapangan',
+                  hintText: 'Jumlah Total Lapangan',
+                  hintStyle: TextStyle(
+                    fontSize: MediaQuery.of(context).size.width / 100 * 5,
+                    color: Colors.black38,
+                  ),
+                ),
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Anda belum mengisi jumlah total lapangan.';
+                  }
+                  return null;
+                },
+              ),
+              // TODO: open and close hour form field
+              15.heightBox,
               'Lapangan Flooring'.text.xl3.make(),
               'Isi dengan 0 jika tidak memiliki lapangan flooring'
                   .text
                   .red500
                   .make(),
+              15.heightBox,
               'Lapangan Sintetis'.text.xl3.make(),
               'Isi dengan 0 jika tidak memiliki lapangan sintetis'
                   .text
                   .red500
                   .make(),
+              15.heightBox,
               'Lokasi Lapangan Futsal'.text.xl3.make(),
               TextButton(
                 style: TextButton.styleFrom(
@@ -97,9 +212,21 @@ class _AddNewFieldScreenState extends State<AddNewFieldScreen> {
                         .red500
                         .make(),
               ),
+              20.heightBox,
+              ElevatedButton.icon(
+                label: 'Simpan'.text.make(),
+                icon: FaIcon(FontAwesomeIcons.save),
+                style: ElevatedButton.styleFrom(
+                  padding: EdgeInsets.all(context.percentWidth * 2),
+                ),
+                onPressed: () {
+                  context.showToast(msg: 'data saved');
+                },
+              ).box.width(double.infinity).make(),
+              20.heightBox,
             ]).p16(),
           ),
-        ]),
+        ]).scrollVertical(),
       ),
     );
   }
@@ -107,7 +234,7 @@ class _AddNewFieldScreenState extends State<AddNewFieldScreen> {
   Widget _widgetImageUpload() {
     return [
       Image(
-        image: AssetImage('assets/ben-sweet-2LowviVHZ-E-unsplash.jpg'),
+        image: AssetImage('assets/icon-admin.jpeg'),
       ),
       ElevatedButton.icon(
         onPressed: () {
