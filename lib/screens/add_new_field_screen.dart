@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:velocity_x/velocity_x.dart';
@@ -9,6 +10,8 @@ class AddNewFieldScreen extends StatefulWidget {
 }
 
 class _AddNewFieldScreenState extends State<AddNewFieldScreen> {
+  double locationLat = -6.633331;
+  double locationLong = 110.7173391;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _futsalNameController = TextEditingController();
   final TextEditingController _futsalAddressController =
@@ -33,9 +36,9 @@ class _AddNewFieldScreenState extends State<AddNewFieldScreen> {
   final TextEditingController _futsalPriceNightSynthesisController =
       TextEditingController(text: '0');
   final TextEditingController _futsalLatitudeController =
-      TextEditingController();
+      TextEditingController(text: '-6.633331');
   final TextEditingController _futsalLongitudeController =
-      TextEditingController();
+      TextEditingController(text: '110.7173391');
 
   @override
   void initState() {
@@ -72,15 +75,15 @@ class _AddNewFieldScreenState extends State<AddNewFieldScreen> {
           title: Text('Tambah Lapangan Baru'),
         ),
         body: VStack([
-          // widget image upload
+          //// widget image upload
           _widgetImageUpload(),
           20.heightBox,
-          // widget form field data
+          //// widget form field data
           Form(
             key: _formKey,
             child: VStack([
               'Informasi Dasar'.text.xl3.make(),
-              // widget name form field
+              //// widget name form field
               TextFormField(
                 controller: _futsalNameController,
                 keyboardType: TextInputType.text,
@@ -105,7 +108,7 @@ class _AddNewFieldScreenState extends State<AddNewFieldScreen> {
                   return null;
                 },
               ),
-              // widget address form field
+              //// widget address form field
               TextFormField(
                 controller: _futsalAddressController,
                 keyboardType: TextInputType.text,
@@ -130,7 +133,7 @@ class _AddNewFieldScreenState extends State<AddNewFieldScreen> {
                   return null;
                 },
               ),
-              // widget phone form field
+              //// widget phone form field
               TextFormField(
                 controller: _futsalPhoneController,
                 keyboardType: TextInputType.phone,
@@ -154,10 +157,11 @@ class _AddNewFieldScreenState extends State<AddNewFieldScreen> {
                   return null;
                 },
               ),
-              // widget the number of fields form field
+              //// widget the number of fields form field
               TextFormField(
                 controller: _futsalNumberOfFieldController,
                 keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 style: TextStyle(
                   fontSize: MediaQuery.of(context).size.width / 100 * 5,
                   color: Colors.black87,
@@ -178,19 +182,216 @@ class _AddNewFieldScreenState extends State<AddNewFieldScreen> {
                   return null;
                 },
               ),
-              // TODO: open and close hour form field
+              //// widget open hour form field
+              TextFormField(
+                // controller: _futsalPhoneController,
+                readOnly: true,
+                style: TextStyle(
+                  fontSize: MediaQuery.of(context).size.width / 100 * 5,
+                  color: Colors.black87,
+                ),
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  labelText: 'Jam Buka',
+                  hintText: 'Jam Buka',
+                  hintStyle: TextStyle(
+                    fontSize: MediaQuery.of(context).size.width / 100 * 5,
+                    color: Colors.black38,
+                  ),
+                ),
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Anda belum mengisi jam buka stadion futsal.';
+                  }
+                  return null;
+                },
+              ),
+              //// widget close hour form field
+              TextFormField(
+                // controller: _futsalPhoneController,
+                readOnly: true,
+                style: TextStyle(
+                  fontSize: MediaQuery.of(context).size.width / 100 * 5,
+                  color: Colors.black87,
+                ),
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  labelText: 'Jam Tutup',
+                  hintText: 'Jam Tutup',
+                  hintStyle: TextStyle(
+                    fontSize: MediaQuery.of(context).size.width / 100 * 5,
+                    color: Colors.black38,
+                  ),
+                ),
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Anda belum mengisi jam tutup stadion futsal.';
+                  }
+                  return null;
+                },
+              ),
               15.heightBox,
               'Lapangan Flooring'.text.xl3.make(),
               'Isi dengan 0 jika tidak memiliki lapangan flooring'
                   .text
                   .red500
                   .make(),
+              //// widget the number of flooring fields form field
+              TextFormField(
+                controller: _futsalNumberOfFieldFlooringController,
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                style: TextStyle(
+                  fontSize: MediaQuery.of(context).size.width / 100 * 5,
+                  color: Colors.black87,
+                ),
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  labelText: 'Jumlah Lapangan Flooring yang Tersedia',
+                  hintText: 'Jumlah Lapangan Flooring yang Tersedia',
+                  hintStyle: TextStyle(
+                    fontSize: MediaQuery.of(context).size.width / 100 * 5,
+                    color: Colors.black38,
+                  ),
+                ),
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Anda belum mengisi jumlah lapangan flooring.';
+                  }
+                  return null;
+                },
+              ),
+              //// widget price day of flooring fields form field
+              TextFormField(
+                controller: _futsalPriceDayFlooringController,
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                style: TextStyle(
+                  fontSize: MediaQuery.of(context).size.width / 100 * 5,
+                  color: Colors.black87,
+                ),
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  labelText: 'Harga Sewa Pagi',
+                  hintText: 'Harga Sewa Pagi',
+                  hintStyle: TextStyle(
+                    fontSize: MediaQuery.of(context).size.width / 100 * 5,
+                    color: Colors.black38,
+                  ),
+                ),
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Anda belum mengisi harga sewa pagi lapangan flooring.';
+                  }
+                  return null;
+                },
+              ),
+              //// widget price night of flooring fields form field
+              TextFormField(
+                controller: _futsalPriceNightFlooringController,
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                style: TextStyle(
+                  fontSize: MediaQuery.of(context).size.width / 100 * 5,
+                  color: Colors.black87,
+                ),
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  labelText: 'Harga Sewa Malam',
+                  hintText: 'Harga Sewa Malam',
+                  hintStyle: TextStyle(
+                    fontSize: MediaQuery.of(context).size.width / 100 * 5,
+                    color: Colors.black38,
+                  ),
+                ),
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Anda belum mengisi harga sewa malam lapangan flooring.';
+                  }
+                  return null;
+                },
+              ),
               15.heightBox,
               'Lapangan Sintetis'.text.xl3.make(),
               'Isi dengan 0 jika tidak memiliki lapangan sintetis'
                   .text
                   .red500
                   .make(),
+              //// widget the number of synthesis fields form field
+              TextFormField(
+                controller: _futsalNumberOfFieldSynthesisController,
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                style: TextStyle(
+                  fontSize: MediaQuery.of(context).size.width / 100 * 5,
+                  color: Colors.black87,
+                ),
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  labelText: 'Jumlah Lapangan Synthesis yang Tersedia',
+                  hintText: 'Jumlah Lapangan Synthesis yang Tersedia',
+                  hintStyle: TextStyle(
+                    fontSize: MediaQuery.of(context).size.width / 100 * 5,
+                    color: Colors.black38,
+                  ),
+                ),
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Anda belum mengisi jumlah lapangan synthesis.';
+                  }
+                  return null;
+                },
+              ),
+              //// widget price day of synthesis fields form field
+              TextFormField(
+                controller: _futsalPriceDaySynthesisController,
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                style: TextStyle(
+                  fontSize: MediaQuery.of(context).size.width / 100 * 5,
+                  color: Colors.black87,
+                ),
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  labelText: 'Harga Sewa Pagi',
+                  hintText: 'Harga Sewa Pagi',
+                  hintStyle: TextStyle(
+                    fontSize: MediaQuery.of(context).size.width / 100 * 5,
+                    color: Colors.black38,
+                  ),
+                ),
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Anda belum mengisi harga sewa pagi lapangan synthesis.';
+                  }
+                  return null;
+                },
+              ),
+              //// widget price night of synthesis fields form field
+              TextFormField(
+                controller: _futsalPriceNightSynthesisController,
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                style: TextStyle(
+                  fontSize: MediaQuery.of(context).size.width / 100 * 5,
+                  color: Colors.black87,
+                ),
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  labelText: 'Harga Sewa Malam',
+                  hintText: 'Harga Sewa Malam',
+                  hintStyle: TextStyle(
+                    fontSize: MediaQuery.of(context).size.width / 100 * 5,
+                    color: Colors.black38,
+                  ),
+                ),
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Anda belum mengisi harga sewa malam lapangan synthesis.';
+                  }
+                  return null;
+                },
+              ),
               15.heightBox,
               'Lokasi Lapangan Futsal'.text.xl3.make(),
               TextButton(
@@ -212,7 +413,60 @@ class _AddNewFieldScreenState extends State<AddNewFieldScreen> {
                         .red500
                         .make(),
               ),
+              //// widget latitude location form field
+              TextFormField(
+                controller: _futsalLatitudeController,
+                keyboardType: TextInputType.number,
+                style: TextStyle(
+                  fontSize: MediaQuery.of(context).size.width / 100 * 5,
+                  color: Colors.black87,
+                ),
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  labelText: 'Latitude Lokasi',
+                  hintText: 'Latitude Lokasi',
+                  hintStyle: TextStyle(
+                    fontSize: MediaQuery.of(context).size.width / 100 * 5,
+                    color: Colors.black38,
+                  ),
+                ),
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Anda belum mengisi latitude lokasi stadion futsal.';
+                  }
+                  return null;
+                },
+              ),
+              //// widget longitude location form field
+              TextFormField(
+                controller: _futsalLongitudeController,
+                keyboardType: TextInputType.number,
+                style: TextStyle(
+                  fontSize: MediaQuery.of(context).size.width / 100 * 5,
+                  color: Colors.black87,
+                ),
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  labelText: 'Longitude Lokasi',
+                  hintText: 'Longitude Lokasi',
+                  hintStyle: TextStyle(
+                    fontSize: MediaQuery.of(context).size.width / 100 * 5,
+                    color: Colors.black38,
+                  ),
+                ),
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Anda belum mengisi longitude lokasi stadion futsal.';
+                  }
+                  return null;
+                },
+              ),
+              'Pratinjau Lokasi'.text.size(context.percentWidth * 5).make(),
+              VxBox(
+                child: 'maps'.text.makeCentered(),
+              ).green300.height(context.percentWidth * 50).make(),
               20.heightBox,
+              //// widget save button
               ElevatedButton.icon(
                 label: 'Simpan'.text.make(),
                 icon: FaIcon(FontAwesomeIcons.save),
