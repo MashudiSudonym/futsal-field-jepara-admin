@@ -6,8 +6,8 @@ final FirebaseFirestore fireStore = FirebaseFirestore.instance;
 final FirebaseAuth auth = FirebaseAuth.instance;
 final FirebaseStorage storage = FirebaseStorage.instance;
 
-// firestore section
-// get schedule data
+//// firestore section
+//// get schedule data
 Future<QuerySnapshot> getScheduleData(
     String futsalFieldUID, String date, String time) {
   return fireStore
@@ -17,7 +17,7 @@ Future<QuerySnapshot> getScheduleData(
       .get();
 }
 
-// update image
+//// update image
 Future<void> updateImageFutsalField(String futsalFieldUID, String downloadURL) {
   return fireStore
       .collection('futsalFields/')
@@ -25,7 +25,7 @@ Future<void> updateImageFutsalField(String futsalFieldUID, String downloadURL) {
       .update({'image': downloadURL});
 }
 
-// update location marker
+//// update location marker
 Future<void> updateLocationMarker(
     String futsalFieldUID, double latitude, double longitude) {
   return fireStore
@@ -34,7 +34,7 @@ Future<void> updateLocationMarker(
       .update({'location': GeoPoint(latitude, longitude)});
 }
 
-// update basic information
+//// update basic information
 Future<void> updateBasicInformation(String futsalFieldUID, String futsalName,
     String futsalAddress, String futsalPhone) {
   return fireStore.collection('futsalFields/').doc(futsalFieldUID).update({
@@ -44,7 +44,7 @@ Future<void> updateBasicInformation(String futsalFieldUID, String futsalName,
   });
 }
 
-// update closing hour
+//// update closing hour
 Future<void> updateClosingHour(String futsalFieldUID, String closingHour) {
   return fireStore
       .collection('futsalFields/')
@@ -52,7 +52,7 @@ Future<void> updateClosingHour(String futsalFieldUID, String closingHour) {
       .update({'closingHours': closingHour});
 }
 
-// update opening hour
+//// update opening hour
 Future<void> updateOpeningHour(String futsalFieldUID, String openingHour) {
   return fireStore
       .collection('futsalFields/')
@@ -60,7 +60,7 @@ Future<void> updateOpeningHour(String futsalFieldUID, String openingHour) {
       .update({'openingHours': openingHour});
 }
 
-// update synthesis night price
+//// update synthesis night price
 Future<void> updateSynthesisNightPrice(String futsalFieldUID, int nightPrice) {
   return fireStore
       .collection('futsalFields/$futsalFieldUID/fieldType/')
@@ -68,7 +68,7 @@ Future<void> updateSynthesisNightPrice(String futsalFieldUID, int nightPrice) {
       .update({'priceNight': nightPrice});
 }
 
-// update synthesis day price
+//// update synthesis day price
 Future<void> updateSynthesisDayPrice(String futsalFieldUID, int dayPrice) {
   return fireStore
       .collection('futsalFields/$futsalFieldUID/fieldType/')
@@ -76,7 +76,7 @@ Future<void> updateSynthesisDayPrice(String futsalFieldUID, int dayPrice) {
       .update({'priceDay': dayPrice});
 }
 
-// update flooring night price
+//// update flooring night price
 Future<void> updateFlooringNightPrice(String futsalFieldUID, int nightPrice) {
   return fireStore
       .collection('futsalFields/$futsalFieldUID/fieldType/')
@@ -84,7 +84,7 @@ Future<void> updateFlooringNightPrice(String futsalFieldUID, int nightPrice) {
       .update({'priceNight': nightPrice});
 }
 
-// update flooring day price
+//// update flooring day price
 Future<void> updateFlooringDayPrice(String futsalFieldUID, int dayPrice) {
   return fireStore
       .collection('futsalFields/$futsalFieldUID/fieldType/')
@@ -92,7 +92,7 @@ Future<void> updateFlooringDayPrice(String futsalFieldUID, int dayPrice) {
       .update({'priceDay': dayPrice});
 }
 
-// update number of field synthesis
+//// update number of field synthesis
 Future<void> updateNumberOfFieldSynthesis(
     String futsalFieldUID, int numberOfField) {
   return fireStore
@@ -101,7 +101,7 @@ Future<void> updateNumberOfFieldSynthesis(
       .update({'numberOfField': numberOfField});
 }
 
-// update number of field flooring
+//// update number of field flooring
 Future<void> updateNumberOfFieldFlooring(
     String futsalFieldUID, int numberOfField) {
   return fireStore
@@ -110,7 +110,7 @@ Future<void> updateNumberOfFieldFlooring(
       .update({'numberOfField': numberOfField});
 }
 
-// remove schedule
+//// remove schedule
 Future<void> deleteSchedule(String scheduleUID, String futsalFieldUID) {
   return fireStore
       .collection('futsalFields/$futsalFieldUID/schedule')
@@ -118,7 +118,7 @@ Future<void> deleteSchedule(String scheduleUID, String futsalFieldUID) {
       .delete();
 }
 
-// upload schedule
+//// upload schedule
 Future<void> createSchedule(String scheduleUID, String futsalFieldUID,
     String fieldType, String name, String date, String time) {
   var data = <String, dynamic>{
@@ -136,12 +136,12 @@ Future<void> createSchedule(String scheduleUID, String futsalFieldUID,
       .set(data);
 }
 
-// get field detail information
+//// get field detail information
 Future<DocumentSnapshot> loadFieldDetailInformation(String reference) {
   return fireStore.doc(reference).get();
 }
 
-// update order status on user order
+//// update order status on user order
 Future<void> updateOrderStatusByOrderUID(String orderUID, int orderStatus) {
   return fireStore
       .collection('userOrders')
@@ -149,18 +149,18 @@ Future<void> updateOrderStatusByOrderUID(String orderUID, int orderStatus) {
       .update({'orderStatus': orderStatus});
 }
 
-// get detail of user order by user order id
+//// get detail of user order by user order id
 Future<DocumentSnapshot> loadOrderDetailByOrderUID(String orderUID) {
   return fireStore.collection('userOrders').doc(orderUID).get();
 }
 
-// get detail of futsal field by futsal field UID
+//// get detail of futsal field by futsal field UID
 Future<DocumentSnapshot> loadFutsalFieldDetailByFutsalFieldUID(
     String futsalFieldUID) {
   return fireStore.collection('futsalFields').doc(futsalFieldUID).get();
 }
 
-// get futsal field list by owner id (active user sign in on this application)
+//// get futsal field list by owner id (active user sign in on this application)
 Stream<QuerySnapshot> loadFutsalField(String ownerUID) {
   return fireStore
       .collection('futsalFields')
@@ -168,7 +168,7 @@ Stream<QuerySnapshot> loadFutsalField(String ownerUID) {
       .snapshots();
 }
 
-// get id of futsal field by owner id (active user sign in on this application)
+//// get id of futsal field by owner id (active user sign in on this application)
 Future<QuerySnapshot> loadFutsalFieldUID(String ownerUID) {
   return fireStore
       .collection('futsalFields')
@@ -177,8 +177,8 @@ Future<QuerySnapshot> loadFutsalFieldUID(String ownerUID) {
       .get();
 }
 
-// get user order data by futsal field id real time
-// if order more than one order, this result is list of orders by futsal field id
+//// get user order data by futsal field id real time
+//// if order more than one order, this result is list of orders by futsal field id
 Stream<QuerySnapshot> loadUserOrder(String futsalUID) {
   return fireStore
       .collection('userOrders')
@@ -186,13 +186,13 @@ Stream<QuerySnapshot> loadUserOrder(String futsalUID) {
       .snapshots();
 }
 
-// load users data by user id real time
-// if user more than one, this result is list of user by id
+//// load users data by user id real time
+//// if user more than one, this result is list of user by id
 Stream<QuerySnapshot> loadUsersCollectionByUserId(String uid) {
   return fireStore.collection('users').where('uid', isEqualTo: uid).snapshots();
 }
 
-// upload user profile data by user id
+//// upload user profile data by user id
 Future<void> uploadUserProfileByUserId(String uid, String name, String address,
     String phone, String imageProfile, String email) {
   var data = <String, dynamic>{
@@ -206,7 +206,7 @@ Future<void> uploadUserProfileByUserId(String uid, String name, String address,
   return fireStore.collection('users').doc(uid).set(data);
 }
 
-// update user profile data by user id
+//// update user profile data by user id
 Future<void> updateUserProfileByUserId(String uid, String name, String address,
     String phone, String imageProfile, String email) {
   var data = <String, dynamic>{
@@ -220,22 +220,22 @@ Future<void> updateUserProfileByUserId(String uid, String name, String address,
   return fireStore.collection('users').doc(uid).update(data);
 }
 
-// get user profile data by user id
+//// get user profile data by user id
 Future<DocumentSnapshot> loadUserProfileDataByUserId(String uid) {
   return fireStore.collection('users').doc(uid).get();
 }
 
-// auth section
-// user sigh out
+//// auth section
+//// user sigh out
 Future<void> userSignOut() => auth.signOut();
 
-// get user phone number
+//// get user phone number
 String userPhoneNumber() => auth.currentUser.phoneNumber;
 
-// get user uid
+//// get user uid
 String userUID() => auth.currentUser.uid;
 
-// storage section
+//// storage section
 
-// firebase storage reference initialize
+//// firebase storage reference initialize
 StorageReference storageReference() => storage.ref();
