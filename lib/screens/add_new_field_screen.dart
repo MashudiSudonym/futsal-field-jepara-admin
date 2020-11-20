@@ -637,14 +637,14 @@ class _AddNewFieldScreenState extends State<AddNewFieldScreen> {
                           if (_formKey.currentState.validate()) {
                             context.showToast(
                                 msg:
-                                    '$_futsalLongitudeController $_futsalLatitudeController');
+                                    '${_futsalLongitudeController.text} ${_futsalLatitudeController.text} ${_openTimePickerController.text} ${_closeTimePickerController.text}');
                           }
                         },
                       ).box.width(double.infinity).make(),
                       20.heightBox,
-                    ]).p16(),
+                    ],).p16(),
                   ),
-                ]).scrollVertical(),
+                ],).scrollVertical(),
         ]),
       ),
     );
