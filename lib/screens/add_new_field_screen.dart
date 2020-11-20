@@ -1,14 +1,18 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:auto_route/auto_route.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:futsal_field_jepara_admin/data/data.dart' as data;
+import 'package:futsal_field_jepara_admin/utils/router.gr.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
 import 'package:somedialog/somedialog.dart';
+import 'package:supercharged/supercharged.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:velocity_x/velocity_x.dart';
 
@@ -50,7 +54,6 @@ class _AddNewFieldScreenState extends State<AddNewFieldScreen> {
       TextEditingController(text: '-6.633331');
   final TextEditingController _futsalLongitudeController =
       TextEditingController(text: '110.7173391');
-  final String _userPhoneNumber = data.userPhoneNumber();
   final String _userUID = data.userUID();
   final ImagePicker _picker = ImagePicker();
   var isLoading = true;
@@ -173,478 +176,577 @@ class _AddNewFieldScreenState extends State<AddNewFieldScreen> {
         ),
         body: ZStack([
           (isLoading && typeOperation == TypeOperation.upload)
-              ? VxBox(
-                  child: Lottie.asset(
-                    'assets/loading.json',
-                    height: context.percentHeight * 25,
+              ? Container(
+                  width: double.infinity,
+                  height: double.infinity,
+                  color: Colors.blueGrey.withOpacity(0.5),
+                  child: Center(
+                    child: Lottie.asset(
+                      'assets/loading.json',
+                      height: MediaQuery.of(context).size.height / 100 * 25,
+                    ),
                   ),
                 )
-                  .color(Vx.blue100.withOpacity(0.5))
-                  .size(double.infinity, double.infinity)
-              : VStack([
-                  //// widget image upload
-                  _widgetImageUpload(),
-                  20.heightBox,
-                  //// widget form field data
-                  Form(
-                    key: _formKey,
-                    child: VStack([
-                      'Informasi Dasar'.text.xl3.make(),
-                      //// widget name form field
-                      TextFormField(
-                        controller: _futsalNameController,
-                        keyboardType: TextInputType.text,
-                        textCapitalization: TextCapitalization.words,
-                        style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.width / 100 * 5,
-                          color: Colors.black87,
-                        ),
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          labelText: 'Nama Stadion Futsal',
-                          hintText: 'Nama Stadion Futsal',
-                          hintStyle: TextStyle(
-                            fontSize:
-                                MediaQuery.of(context).size.width / 100 * 5,
-                            color: Colors.black38,
-                          ),
-                        ),
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return 'Anda belum mengisi nama stadion futsal.';
-                          }
-                          return null;
-                        },
-                      ),
-                      //// widget address form field
-                      TextFormField(
-                        controller: _futsalAddressController,
-                        keyboardType: TextInputType.text,
-                        textCapitalization: TextCapitalization.words,
-                        style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.width / 100 * 5,
-                          color: Colors.black87,
-                        ),
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          labelText: 'Alamat Stadion Futsal',
-                          hintText: 'Alamat Stadion Futsal',
-                          hintStyle: TextStyle(
-                            fontSize:
-                                MediaQuery.of(context).size.width / 100 * 5,
-                            color: Colors.black38,
-                          ),
-                        ),
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return 'Anda belum mengisi alamat stadion futsal.';
-                          }
-                          return null;
-                        },
-                      ),
-                      //// widget phone form field
-                      TextFormField(
-                        controller: _futsalPhoneController,
-                        keyboardType: TextInputType.phone,
-                        style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.width / 100 * 5,
-                          color: Colors.black87,
-                        ),
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          labelText: 'Nomor Telepon Stadion Futsal',
-                          hintText: 'Nomor Telepon Stadion Futsal',
-                          hintStyle: TextStyle(
-                            fontSize:
-                                MediaQuery.of(context).size.width / 100 * 5,
-                            color: Colors.black38,
-                          ),
-                        ),
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return 'Anda belum mengisi nomor telepon stadion futsal.';
-                          }
-                          return null;
-                        },
-                      ),
-                      //// widget the number of fields form field
-                      TextFormField(
-                        controller: _futsalNumberOfFieldController,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly
-                        ],
-                        style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.width / 100 * 5,
-                          color: Colors.black87,
-                        ),
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          labelText: 'Jumlah Total Lapangan',
-                          hintText: 'Jumlah Total Lapangan',
-                          hintStyle: TextStyle(
-                            fontSize:
-                                MediaQuery.of(context).size.width / 100 * 5,
-                            color: Colors.black38,
-                          ),
-                        ),
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return 'Anda belum mengisi jumlah total lapangan.';
-                          }
-                          return null;
-                        },
-                      ),
-                      //// widget open hour form field
-                      TextFormField(
-                        controller: _openTimePickerController,
-                        readOnly: true,
-                        style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.width / 100 * 5,
-                          color: Colors.black87,
-                        ),
-                        onTap: () {
-                          setState(() {
-                            _selectOpenTime(context);
-                          });
-                        },
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          labelText: 'Jam Buka',
-                          hintText: '$_openTimeValue',
-                          hintStyle: TextStyle(
-                            fontSize:
-                                MediaQuery.of(context).size.width / 100 * 5,
-                            color: Colors.black38,
-                          ),
-                        ),
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return 'Anda belum mengisi jam buka stadion futsal.';
-                          }
-                          return null;
-                        },
-                      ),
-                      //// widget close hour form field
-                      TextFormField(
-                        controller: _closeTimePickerController,
-                        readOnly: true,
-                        style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.width / 100 * 5,
-                          color: Colors.black87,
-                        ),
-                        onTap: () {
-                          setState(() {
-                            _selectCloseTime(context);
-                          });
-                        },
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          labelText: 'Jam Tutup',
-                          hintText: '$_closeTimeValue',
-                          hintStyle: TextStyle(
-                            fontSize:
-                                MediaQuery.of(context).size.width / 100 * 5,
-                            color: Colors.black38,
-                          ),
-                        ),
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return 'Anda belum mengisi jam tutup stadion futsal.';
-                          }
-                          return null;
-                        },
-                      ),
-                      15.heightBox,
-                      'Lapangan Flooring'.text.xl3.make(),
-                      'Isi dengan 0 jika tidak memiliki lapangan flooring'
-                          .text
-                          .red500
-                          .make(),
-                      //// widget the number of flooring fields form field
-                      TextFormField(
-                        controller: _futsalNumberOfFieldFlooringController,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly
-                        ],
-                        style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.width / 100 * 5,
-                          color: Colors.black87,
-                        ),
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          labelText: 'Jumlah Lapangan Flooring yang Tersedia',
-                          hintText: 'Jumlah Lapangan Flooring yang Tersedia',
-                          hintStyle: TextStyle(
-                            fontSize:
-                                MediaQuery.of(context).size.width / 100 * 5,
-                            color: Colors.black38,
-                          ),
-                        ),
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return 'Anda belum mengisi jumlah lapangan flooring.';
-                          }
-                          return null;
-                        },
-                      ),
-                      //// widget price day of flooring fields form field
-                      TextFormField(
-                        controller: _futsalPriceDayFlooringController,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly
-                        ],
-                        style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.width / 100 * 5,
-                          color: Colors.black87,
-                        ),
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          labelText: 'Harga Sewa Pagi',
-                          hintText: 'Harga Sewa Pagi',
-                          hintStyle: TextStyle(
-                            fontSize:
-                                MediaQuery.of(context).size.width / 100 * 5,
-                            color: Colors.black38,
-                          ),
-                        ),
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return 'Anda belum mengisi harga sewa pagi lapangan flooring.';
-                          }
-                          return null;
-                        },
-                      ),
-                      //// widget price night of flooring fields form field
-                      TextFormField(
-                        controller: _futsalPriceNightFlooringController,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly
-                        ],
-                        style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.width / 100 * 5,
-                          color: Colors.black87,
-                        ),
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          labelText: 'Harga Sewa Malam',
-                          hintText: 'Harga Sewa Malam',
-                          hintStyle: TextStyle(
-                            fontSize:
-                                MediaQuery.of(context).size.width / 100 * 5,
-                            color: Colors.black38,
-                          ),
-                        ),
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return 'Anda belum mengisi harga sewa malam lapangan flooring.';
-                          }
-                          return null;
-                        },
-                      ),
-                      15.heightBox,
-                      'Lapangan Sintetis'.text.xl3.make(),
-                      'Isi dengan 0 jika tidak memiliki lapangan sintetis'
-                          .text
-                          .red500
-                          .make(),
-                      //// widget the number of synthesis fields form field
-                      TextFormField(
-                        controller: _futsalNumberOfFieldSynthesisController,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly
-                        ],
-                        style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.width / 100 * 5,
-                          color: Colors.black87,
-                        ),
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          labelText: 'Jumlah Lapangan Synthesis yang Tersedia',
-                          hintText: 'Jumlah Lapangan Synthesis yang Tersedia',
-                          hintStyle: TextStyle(
-                            fontSize:
-                                MediaQuery.of(context).size.width / 100 * 5,
-                            color: Colors.black38,
-                          ),
-                        ),
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return 'Anda belum mengisi jumlah lapangan synthesis.';
-                          }
-                          return null;
-                        },
-                      ),
-                      //// widget price day of synthesis fields form field
-                      TextFormField(
-                        controller: _futsalPriceDaySynthesisController,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly
-                        ],
-                        style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.width / 100 * 5,
-                          color: Colors.black87,
-                        ),
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          labelText: 'Harga Sewa Pagi',
-                          hintText: 'Harga Sewa Pagi',
-                          hintStyle: TextStyle(
-                            fontSize:
-                                MediaQuery.of(context).size.width / 100 * 5,
-                            color: Colors.black38,
-                          ),
-                        ),
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return 'Anda belum mengisi harga sewa pagi lapangan synthesis.';
-                          }
-                          return null;
-                        },
-                      ),
-                      //// widget price night of synthesis fields form field
-                      TextFormField(
-                        controller: _futsalPriceNightSynthesisController,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly
-                        ],
-                        style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.width / 100 * 5,
-                          color: Colors.black87,
-                        ),
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          labelText: 'Harga Sewa Malam',
-                          hintText: 'Harga Sewa Malam',
-                          hintStyle: TextStyle(
-                            fontSize:
-                                MediaQuery.of(context).size.width / 100 * 5,
-                            color: Colors.black38,
-                          ),
-                        ),
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return 'Anda belum mengisi harga sewa malam lapangan synthesis.';
-                          }
-                          return null;
-                        },
-                      ),
-                      15.heightBox,
-                      'Lokasi Lapangan Futsal'.text.xl3.make(),
-                      TextButton(
-                        style: TextButton.styleFrom(
-                          padding: EdgeInsets.zero,
-                        ),
-                        onPressed: () async {
-                          const url = 'https://youtu.be/-ZsT77K8ijs';
-
-                          if (await canLaunch(url)) {
-                            await launch(url);
-                          } else {
-                            throw 'Error cannot launch $url';
-                          }
-                        },
-                        child:
-                            'Tutorial cara mendapatkan nilai latitude dan longitude lokasi, klik disini!'
-                                .text
-                                .red500
-                                .make(),
-                      ),
-                      //// widget latitude location form field
-                      TextFormField(
-                        controller: _futsalLatitudeController,
-                        keyboardType: TextInputType.number,
-                        style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.width / 100 * 5,
-                          color: Colors.black87,
-                        ),
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          labelText: 'Latitude Lokasi',
-                          hintText: 'Latitude Lokasi',
-                          hintStyle: TextStyle(
-                            fontSize:
-                                MediaQuery.of(context).size.width / 100 * 5,
-                            color: Colors.black38,
-                          ),
-                        ),
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return 'Anda belum mengisi latitude lokasi stadion futsal.';
-                          }
-                          return null;
-                        },
-                      ),
-                      //// widget longitude location form field
-                      TextFormField(
-                        controller: _futsalLongitudeController,
-                        keyboardType: TextInputType.number,
-                        style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.width / 100 * 5,
-                          color: Colors.black87,
-                        ),
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          labelText: 'Longitude Lokasi',
-                          hintText: 'Longitude Lokasi',
-                          hintStyle: TextStyle(
-                            fontSize:
-                                MediaQuery.of(context).size.width / 100 * 5,
-                            color: Colors.black38,
-                          ),
-                        ),
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return 'Anda belum mengisi longitude lokasi stadion futsal.';
-                          }
-                          return null;
-                        },
-                      ),
-                      20.heightBox,
-                      //// widget save button
-                      ElevatedButton.icon(
-                        label: 'Simpan'.text.make(),
-                        icon: FaIcon(FontAwesomeIcons.save),
-                        style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.all(context.percentWidth * 2),
-                        ),
-                        onPressed: () async {
-                          //// form validation
-                          if (image == null) {
-                            return SomeDialog(
-                              context: context,
-                              path: 'assets/report.json',
-                              title: 'Peringatan',
-                              content:
-                                  'Anda belum mengambil foto stadion futsal.',
-                              submit: () {},
-                              mode: SomeMode.Lottie,
-                              appName: 'Futsal Field Jepara',
-                              buttonConfig: ButtonConfig(
-                                buttonDoneColor: Colors.blue,
-                                dialogDone: 'Oke',
-                                dialogCancel: '',
-                                buttonCancelColor: Hexcolor('#FFFFFF'),
+              : VStack(
+                  [
+                    //// widget image upload
+                    _widgetImageUpload(),
+                    20.heightBox,
+                    //// widget form field data
+                    Form(
+                      key: _formKey,
+                      child: VStack(
+                        [
+                          'Informasi Dasar'.text.xl3.make(),
+                          //// widget name form field
+                          TextFormField(
+                            controller: _futsalNameController,
+                            keyboardType: TextInputType.text,
+                            textCapitalization: TextCapitalization.words,
+                            style: TextStyle(
+                              fontSize:
+                                  MediaQuery.of(context).size.width / 100 * 5,
+                              color: Colors.black87,
+                            ),
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              labelText: 'Nama Stadion Futsal',
+                              hintText: 'Nama Stadion Futsal',
+                              hintStyle: TextStyle(
+                                fontSize:
+                                    MediaQuery.of(context).size.width / 100 * 5,
+                                color: Colors.black38,
                               ),
-                            );
-                          }
-                          if (_formKey.currentState.validate()) {
-                            context.showToast(
-                                msg:
-                                    '${_futsalLongitudeController.text} ${_futsalLatitudeController.text} ${_openTimePickerController.text} ${_closeTimePickerController.text}');
-                          }
-                        },
-                      ).box.width(double.infinity).make(),
-                      20.heightBox,
-                    ],).p16(),
-                  ),
-                ],).scrollVertical(),
+                            ),
+                            validator: (value) {
+                              if (value.isEmpty) {
+                                return 'Anda belum mengisi nama stadion futsal.';
+                              }
+                              return null;
+                            },
+                          ),
+                          //// widget address form field
+                          TextFormField(
+                            controller: _futsalAddressController,
+                            keyboardType: TextInputType.text,
+                            textCapitalization: TextCapitalization.words,
+                            style: TextStyle(
+                              fontSize:
+                                  MediaQuery.of(context).size.width / 100 * 5,
+                              color: Colors.black87,
+                            ),
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              labelText: 'Alamat Stadion Futsal',
+                              hintText: 'Alamat Stadion Futsal',
+                              hintStyle: TextStyle(
+                                fontSize:
+                                    MediaQuery.of(context).size.width / 100 * 5,
+                                color: Colors.black38,
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value.isEmpty) {
+                                return 'Anda belum mengisi alamat stadion futsal.';
+                              }
+                              return null;
+                            },
+                          ),
+                          //// widget phone form field
+                          TextFormField(
+                            controller: _futsalPhoneController,
+                            keyboardType: TextInputType.phone,
+                            style: TextStyle(
+                              fontSize:
+                                  MediaQuery.of(context).size.width / 100 * 5,
+                              color: Colors.black87,
+                            ),
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              labelText: 'Nomor Telepon Stadion Futsal',
+                              hintText: 'Nomor Telepon Stadion Futsal',
+                              hintStyle: TextStyle(
+                                fontSize:
+                                    MediaQuery.of(context).size.width / 100 * 5,
+                                color: Colors.black38,
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value.isEmpty) {
+                                return 'Anda belum mengisi nomor telepon stadion futsal.';
+                              }
+                              return null;
+                            },
+                          ),
+                          //// widget the number of fields form field
+                          TextFormField(
+                            controller: _futsalNumberOfFieldController,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
+                            style: TextStyle(
+                              fontSize:
+                                  MediaQuery.of(context).size.width / 100 * 5,
+                              color: Colors.black87,
+                            ),
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              labelText: 'Jumlah Total Lapangan',
+                              hintText: 'Jumlah Total Lapangan',
+                              hintStyle: TextStyle(
+                                fontSize:
+                                    MediaQuery.of(context).size.width / 100 * 5,
+                                color: Colors.black38,
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value.isEmpty) {
+                                return 'Anda belum mengisi jumlah total lapangan.';
+                              }
+                              return null;
+                            },
+                          ),
+                          //// widget open hour form field
+                          TextFormField(
+                            controller: _openTimePickerController,
+                            readOnly: true,
+                            style: TextStyle(
+                              fontSize:
+                                  MediaQuery.of(context).size.width / 100 * 5,
+                              color: Colors.black87,
+                            ),
+                            onTap: () {
+                              setState(() {
+                                _selectOpenTime(context);
+                              });
+                            },
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              labelText: 'Jam Buka',
+                              hintText: '$_openTimeValue',
+                              hintStyle: TextStyle(
+                                fontSize:
+                                    MediaQuery.of(context).size.width / 100 * 5,
+                                color: Colors.black38,
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value.isEmpty) {
+                                return 'Anda belum mengisi jam buka stadion futsal.';
+                              }
+                              return null;
+                            },
+                          ),
+                          //// widget close hour form field
+                          TextFormField(
+                            controller: _closeTimePickerController,
+                            readOnly: true,
+                            style: TextStyle(
+                              fontSize:
+                                  MediaQuery.of(context).size.width / 100 * 5,
+                              color: Colors.black87,
+                            ),
+                            onTap: () {
+                              setState(() {
+                                _selectCloseTime(context);
+                              });
+                            },
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              labelText: 'Jam Tutup',
+                              hintText: '$_closeTimeValue',
+                              hintStyle: TextStyle(
+                                fontSize:
+                                    MediaQuery.of(context).size.width / 100 * 5,
+                                color: Colors.black38,
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value.isEmpty) {
+                                return 'Anda belum mengisi jam tutup stadion futsal.';
+                              }
+                              return null;
+                            },
+                          ),
+                          15.heightBox,
+                          'Lapangan Flooring'.text.xl3.make(),
+                          'Isi dengan 0 jika tidak memiliki lapangan flooring'
+                              .text
+                              .red500
+                              .make(),
+                          //// widget the number of flooring fields form field
+                          TextFormField(
+                            controller: _futsalNumberOfFieldFlooringController,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
+                            style: TextStyle(
+                              fontSize:
+                                  MediaQuery.of(context).size.width / 100 * 5,
+                              color: Colors.black87,
+                            ),
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              labelText:
+                                  'Jumlah Lapangan Flooring yang Tersedia',
+                              hintText:
+                                  'Jumlah Lapangan Flooring yang Tersedia',
+                              hintStyle: TextStyle(
+                                fontSize:
+                                    MediaQuery.of(context).size.width / 100 * 5,
+                                color: Colors.black38,
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value.isEmpty) {
+                                return 'Anda belum mengisi jumlah lapangan flooring.';
+                              }
+                              return null;
+                            },
+                          ),
+                          //// widget price day of flooring fields form field
+                          TextFormField(
+                            controller: _futsalPriceDayFlooringController,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
+                            style: TextStyle(
+                              fontSize:
+                                  MediaQuery.of(context).size.width / 100 * 5,
+                              color: Colors.black87,
+                            ),
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              labelText: 'Harga Sewa Pagi',
+                              hintText: 'Harga Sewa Pagi',
+                              hintStyle: TextStyle(
+                                fontSize:
+                                    MediaQuery.of(context).size.width / 100 * 5,
+                                color: Colors.black38,
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value.isEmpty) {
+                                return 'Anda belum mengisi harga sewa pagi lapangan flooring.';
+                              }
+                              return null;
+                            },
+                          ),
+                          //// widget price night of flooring fields form field
+                          TextFormField(
+                            controller: _futsalPriceNightFlooringController,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
+                            style: TextStyle(
+                              fontSize:
+                                  MediaQuery.of(context).size.width / 100 * 5,
+                              color: Colors.black87,
+                            ),
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              labelText: 'Harga Sewa Malam',
+                              hintText: 'Harga Sewa Malam',
+                              hintStyle: TextStyle(
+                                fontSize:
+                                    MediaQuery.of(context).size.width / 100 * 5,
+                                color: Colors.black38,
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value.isEmpty) {
+                                return 'Anda belum mengisi harga sewa malam lapangan flooring.';
+                              }
+                              return null;
+                            },
+                          ),
+                          15.heightBox,
+                          'Lapangan Sintetis'.text.xl3.make(),
+                          'Isi dengan 0 jika tidak memiliki lapangan sintetis'
+                              .text
+                              .red500
+                              .make(),
+                          //// widget the number of synthesis fields form field
+                          TextFormField(
+                            controller: _futsalNumberOfFieldSynthesisController,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
+                            style: TextStyle(
+                              fontSize:
+                                  MediaQuery.of(context).size.width / 100 * 5,
+                              color: Colors.black87,
+                            ),
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              labelText:
+                                  'Jumlah Lapangan Synthesis yang Tersedia',
+                              hintText:
+                                  'Jumlah Lapangan Synthesis yang Tersedia',
+                              hintStyle: TextStyle(
+                                fontSize:
+                                    MediaQuery.of(context).size.width / 100 * 5,
+                                color: Colors.black38,
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value.isEmpty) {
+                                return 'Anda belum mengisi jumlah lapangan synthesis.';
+                              }
+                              return null;
+                            },
+                          ),
+                          //// widget price day of synthesis fields form field
+                          TextFormField(
+                            controller: _futsalPriceDaySynthesisController,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
+                            style: TextStyle(
+                              fontSize:
+                                  MediaQuery.of(context).size.width / 100 * 5,
+                              color: Colors.black87,
+                            ),
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              labelText: 'Harga Sewa Pagi',
+                              hintText: 'Harga Sewa Pagi',
+                              hintStyle: TextStyle(
+                                fontSize:
+                                    MediaQuery.of(context).size.width / 100 * 5,
+                                color: Colors.black38,
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value.isEmpty) {
+                                return 'Anda belum mengisi harga sewa pagi lapangan synthesis.';
+                              }
+                              return null;
+                            },
+                          ),
+                          //// widget price night of synthesis fields form field
+                          TextFormField(
+                            controller: _futsalPriceNightSynthesisController,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
+                            style: TextStyle(
+                              fontSize:
+                                  MediaQuery.of(context).size.width / 100 * 5,
+                              color: Colors.black87,
+                            ),
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              labelText: 'Harga Sewa Malam',
+                              hintText: 'Harga Sewa Malam',
+                              hintStyle: TextStyle(
+                                fontSize:
+                                    MediaQuery.of(context).size.width / 100 * 5,
+                                color: Colors.black38,
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value.isEmpty) {
+                                return 'Anda belum mengisi harga sewa malam lapangan synthesis.';
+                              }
+                              return null;
+                            },
+                          ),
+                          15.heightBox,
+                          'Lokasi Lapangan Futsal'.text.xl3.make(),
+                          TextButton(
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.zero,
+                            ),
+                            onPressed: () async {
+                              const url = 'https://youtu.be/-ZsT77K8ijs';
+
+                              if (await canLaunch(url)) {
+                                await launch(url);
+                              } else {
+                                throw 'Error cannot launch $url';
+                              }
+                            },
+                            child:
+                                'Tutorial cara mendapatkan nilai latitude dan longitude lokasi, klik disini!'
+                                    .text
+                                    .red500
+                                    .make(),
+                          ),
+                          //// widget latitude location form field
+                          TextFormField(
+                            controller: _futsalLatitudeController,
+                            keyboardType: TextInputType.number,
+                            style: TextStyle(
+                              fontSize:
+                                  MediaQuery.of(context).size.width / 100 * 5,
+                              color: Colors.black87,
+                            ),
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              labelText: 'Latitude Lokasi',
+                              hintText: 'Latitude Lokasi',
+                              hintStyle: TextStyle(
+                                fontSize:
+                                    MediaQuery.of(context).size.width / 100 * 5,
+                                color: Colors.black38,
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value.isEmpty) {
+                                return 'Anda belum mengisi latitude lokasi stadion futsal.';
+                              }
+                              return null;
+                            },
+                          ),
+                          //// widget longitude location form field
+                          TextFormField(
+                            controller: _futsalLongitudeController,
+                            keyboardType: TextInputType.number,
+                            style: TextStyle(
+                              fontSize:
+                                  MediaQuery.of(context).size.width / 100 * 5,
+                              color: Colors.black87,
+                            ),
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              labelText: 'Longitude Lokasi',
+                              hintText: 'Longitude Lokasi',
+                              hintStyle: TextStyle(
+                                fontSize:
+                                    MediaQuery.of(context).size.width / 100 * 5,
+                                color: Colors.black38,
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value.isEmpty) {
+                                return 'Anda belum mengisi longitude lokasi stadion futsal.';
+                              }
+                              return null;
+                            },
+                          ),
+                          20.heightBox,
+                          //// widget save button
+                          ElevatedButton.icon(
+                            label: 'Simpan'.text.make(),
+                            icon: FaIcon(FontAwesomeIcons.save),
+                            style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.all(context.percentWidth * 2),
+                            ),
+                            onPressed: () async {
+                              //// form validation
+                              if (image == null) {
+                                return SomeDialog(
+                                  context: context,
+                                  path: 'assets/report.json',
+                                  title: 'Peringatan',
+                                  content:
+                                      'Anda belum mengambil foto stadion futsal.',
+                                  submit: () {},
+                                  mode: SomeMode.Lottie,
+                                  appName: 'Futsal Field Jepara',
+                                  buttonConfig: ButtonConfig(
+                                    buttonDoneColor: Colors.blue,
+                                    dialogDone: 'Oke',
+                                    dialogCancel: '',
+                                    buttonCancelColor: Hexcolor('#FFFFFF'),
+                                  ),
+                                );
+                              }
+                              if (_formKey.currentState.validate()) {
+                                var random = Random().nextInt(999);
+                                var uploadTask = data
+                                    .storageReference()
+                                    .child('futsal/futsal-$random-$_userUID')
+                                    .child('futsal/futsal-$random-$_userUID')
+                                    .putFile(image);
+                                var streamSubscription =
+                                    uploadTask.events.listen((event) async {
+                                  var eventType = event.type;
+                                  if (eventType ==
+                                      StorageTaskEventType.progress) {
+                                    setState(() {
+                                      typeOperation = TypeOperation.upload;
+                                      isLoading = true;
+                                    });
+                                  } else if (eventType ==
+                                      StorageTaskEventType.failure) {
+                                    context.showToast(
+                                        msg: 'foto gagal di upload');
+                                    setState(() {
+                                      isLoading = false;
+                                      isSuccess = false;
+                                      typeOperation = null;
+                                    });
+                                  } else if (eventType ==
+                                      StorageTaskEventType.success) {
+                                    try {
+                                      var downloadUrl = await event.snapshot.ref
+                                          .getDownloadURL();
+
+                                      var uploadData =
+                                          await data.createNewFutsalField(
+                                        _userUID,
+                                        downloadUrl.toString(),
+                                        _futsalNameController.text,
+                                        _futsalAddressController.text,
+                                        _futsalPhoneController.text,
+                                        _futsalNumberOfFieldController.text
+                                            .toInt(),
+                                        _futsalOpenHourController.text,
+                                        _futsalCloseHourController.text,
+                                        _futsalNumberOfFieldFlooringController
+                                            .text
+                                            .toInt(),
+                                        _futsalPriceDayFlooringController.text
+                                            .toInt(),
+                                        _futsalPriceNightFlooringController.text
+                                            .toInt(),
+                                        _futsalNumberOfFieldSynthesisController
+                                            .text
+                                            .toInt(),
+                                        _futsalPriceDaySynthesisController.text
+                                            .toInt(),
+                                        _futsalPriceNightSynthesisController
+                                            .text
+                                            .toInt(),
+                                        _futsalLatitudeController.text
+                                            .toDouble(),
+                                        _futsalLongitudeController.text
+                                            .toDouble(),
+                                      );
+                                      await ExtendedNavigator.root
+                                          .pushAndRemoveUntil(
+                                              Routes.fieldInformationScreen,
+                                              (route) => false);
+                                      setState(() {
+                                        isLoading = false;
+                                        isSuccess = true;
+                                        typeOperation = null;
+                                      });
+                                    } catch (e) {
+                                      print(e);
+                                    }
+                                  }
+                                });
+                                await uploadTask.onComplete;
+                                await streamSubscription.cancel();
+                              }
+                            },
+                          ).box.width(double.infinity).make(),
+                          20.heightBox,
+                        ],
+                      ).p16(),
+                    ),
+                  ],
+                ).scrollVertical(),
         ]),
       ),
     );
