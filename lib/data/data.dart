@@ -7,6 +7,67 @@ final FirebaseAuth auth = FirebaseAuth.instance;
 final FirebaseStorage storage = FirebaseStorage.instance;
 
 //// firestore section
+
+//// create new futsal field
+void createNewFutsalField(
+  String owner,
+  String image,
+  String name,
+  String address,
+  String phone,
+  int numberOfField,
+  String openHour,
+  String closeHour,
+  int numberOfFieldFlooring,
+  int priceDayFlooring,
+  int priceNightFlooring,
+  int numberOfFieldSynthesis,
+  int priceDaySynthesis,
+  int priceNightSynthesis,
+  double locationLat,
+  double locationLong,
+) {
+  var uid = fireStore.collection('futsalFields').doc().id;
+  var futsalFieldData = <String, dynamic>{
+    'uid': uid,
+    'owner': owner,
+    'name': name,
+    'address': address,
+    'phone': phone,
+    'numberOfField': numberOfField,
+    'image': image,
+    'location': GeoPoint(locationLat, locationLong),
+    'openingHours': openHour,
+    'closingHours': closeHour,
+    'fieldTypeFlooring': '/futsalFields/$uid/fieldType/flooring',
+    'fieldTypeSynthesis': '/futsalFields/$uid/fieldType/synthesis',
+  };
+  var flooringData = <String, dynamic>{
+    'uid': 'flooring',
+    'numberOfField': numberOfFieldFlooring,
+    'priceDay': priceDayFlooring,
+    'priceNight': priceNightFlooring,
+    'name': 'Flooring'
+  };
+  var synthesisData = <String, dynamic>{
+    'uid': 'synthesis',
+    'numberOfField': numberOfFieldSynthesis,
+    'priceDay': priceDaySynthesis,
+    'priceNight': priceNightSynthesis,
+    'name': 'Synthesis'
+  };
+
+  fireStore.collection('futsalFields').doc(uid).set(futsalFieldData);
+  fireStore
+      .collection('futsalFields/$uid/fieldType')
+      .doc('flooring')
+      .set(flooringData);
+  fireStore
+      .collection('futsalFields/$uid/fieldType')
+      .doc('synthesis')
+      .set(synthesisData);
+}
+
 //// get schedule data
 Future<QuerySnapshot> getScheduleData(
     String futsalFieldUID, String date, String time) {
